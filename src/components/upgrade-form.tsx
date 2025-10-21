@@ -2,17 +2,14 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
-import { Label } from '@/components/ui/label';
 import { getUpgradeSuggestions, type UpgradeState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from '@/components/submit-button';
 import { AiResponseDisplay } from './ai-response-display';
-import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power, Fan } from 'lucide-react';
-import { Combobox } from './combobox';
-import { componentsData } from '@/lib/components-data';
-import { ComponentDetailsDialog } from './component-details-dialog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { ComponentSelector } from './component-selector';
+import { componentsData } from '@/lib/components-data';
 
 const initialState: UpgradeState = {
   form: {
@@ -21,14 +18,6 @@ const initialState: UpgradeState = {
   status: 'idle',
   message: '',
 };
-
-const findLabel = (category: keyof typeof componentsData, value: string) => {
-    if (!value) return '';
-    const items = componentsData[category];
-    const item = items.flatMap(group => group.items).find(i => i.value.toLowerCase() === value.toLowerCase());
-    return item ? item.label : value;
-};
-
 
 export function UpgradeForm() {
   const [state, formAction] = useActionState(getUpgradeSuggestions, initialState);
@@ -42,7 +31,6 @@ export function UpgradeForm() {
   const [psu, setPsu] = useState('');
   const [caseComponent, setCaseComponent] = useState('');
   const [cooler, setCooler] = useState('');
-
 
   useEffect(() => {
     if (state.status === 'error' && state.message) {
@@ -74,54 +62,19 @@ export function UpgradeForm() {
         setCooler('');
       }
     }
-  }, [state]);
+  }, [state, toast]);
 
-  const renderComboboxWithDetails = (
-    category: keyof typeof componentsData,
-    icon: React.ElementType,
-    label: string,
-    value: string,
-    onChange: (value: string) => void
-  ) => {
-    const Icon = icon;
-    return (
-      <div className="grid w-full items-center gap-2">
-        <Label htmlFor={category} className="flex items-center gap-2">
-          <Icon className="h-5 w-5 text-muted-foreground" />
-          {label}
-        </Label>
-        <div className="flex items-center gap-2">
-          <Combobox
-            name={category}
-            items={componentsData[category]}
-            value={value}
-            onChange={onChange}
-            placeholder={`Selecione um(a) ${label}`}
-            searchPlaceholder={`Procurar ${label}...`}
-            emptyPlaceholder={`Nenhum(a) ${label} encontrado(a).`}
-          />
-          <ComponentDetailsDialog
-            componentValue={value}
-            componentLabel={findLabel(category, value)}
-            category={category}
-            disabled={!value}
-          />
-        </div>
-      </div>
-    );
-  };
-  
   return (
     <form action={formAction} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {renderComboboxWithDetails('cpu', Cpu, 'Processador (CPU)', cpu, setCpu)}
-        {renderComboboxWithDetails('cooler', Fan, 'Cooler do Processador', cooler, setCooler)}
-        {renderComboboxWithDetails('gpu', Puzzle, 'Placa de Vídeo (GPU)', gpu, setGpu)}
-        {renderComboboxWithDetails('motherboard', CircuitBoard, 'Placa-mãe', motherboard, setMotherboard)}
-        {renderComboboxWithDetails('ram', MemoryStick, 'Memória RAM', ram, setRam)}
-        {renderComboboxWithDetails('storage', HardDrive, 'Armazenamento (SSD/HD)', storage, setStorage)}
-        {renderComboboxWithDetails('psu', Power, 'Fonte (PSU)', psu, setPsu)}
-        {renderComboboxWithDetails('case', PcCase, 'Gabinete', caseComponent, setCaseComponent)}
+        <ComponentSelector category="cpu" label="Processador (CPU)" value={cpu} onChange={setCpu} data={componentsData.cpu} />
+        <ComponentSelector category="cooler" label="Cooler do Processador" value={cooler} onChange={setCooler} data={componentsData.cooler} />
+        <ComponentSelector category="gpu" label="Placa de Vídeo (GPU)" value={gpu} onChange={setGpu} data={componentsData.gpu} />
+        <ComponentSelector category="motherboard" label="Placa-mãe" value={motherboard} onChange={setMotherboard} data={componentsData.motherboard} />
+        <ComponentSelector category="ram" label="Memória RAM" value={ram} onChange={setRam} data={componentsData.ram} />
+        <ComponentSelector category="storage" label="Armazenamento (SSD/HD)" value={storage} onChange={setStorage} data={componentsData.storage} />
+        <ComponentSelector category="psu" label="Fonte (PSU)" value={psu} onChange={setPsu} data={componentsData.psu} />
+        <ComponentSelector category="case" label="Gabinete" value={caseComponent} onChange={setCaseComponent} data={componentsData.case} />
       </div>
       <SubmitButton className="w-full sm:w-auto bg-accent hover:bg-accent/90">
         Obter Sugestões de Upgrade
