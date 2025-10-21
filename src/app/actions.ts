@@ -60,14 +60,23 @@ const buildSchema = z.object({
   existingComponents: z.string().optional(),
 });
 
-const saveBuildSchema = z.object({
+const saveConfigBaseSchema = z.object({
   name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres.'),
   description: z.string().optional(),
-  buildConfiguration: z.string(),
+  userId: z.string(),
+  aiResponse: z.string(),
+});
+
+const saveBuildSchema = saveConfigBaseSchema.extend({
   totalCost: z.coerce.number(),
   performanceScore: z.coerce.number(),
-  userId: z.string(),
 });
+
+const saveUpgradeSchema = saveConfigBaseSchema.extend({
+    upgradeCost: z.coerce.number(),
+    currentValue: z.coerce.number(),
+});
+
 
 export async function getUpgradeSuggestions(
   prevState: UpgradeState,
@@ -176,13 +185,24 @@ export async function getNewBuild(
   }
 }
 
+async function saveConfiguration(userId: string, data: any) {
+  const { firestore } = await initializeServerFirebase();
+  const collectionRef = collection(firestore, `users/${userId}/configurations`);
+  
+  await addDoc(collectionRef, {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+}
+
 export async function saveNewBuild(formData: FormData) {
   'use server';
 
   const validatedFields = saveBuildSchema.safeParse({
     name: formData.get('name'),
     description: formData.get('description'),
-    buildConfiguration: formData.get('buildConfiguration'),
+    aiResponse: formData.get('aiResponse'),
     totalCost: formData.get('totalCost'),
     performanceScore: formData.get('performanceScore'),
     userId: formData.get('userId'),
@@ -192,21 +212,20 @@ export async function saveNewBuild(formData: FormData) {
     return { error: 'Dados inválidos para salvar a build.' };
   }
   
-  const { firestore } = await initializeServerFirebase();
-  const { name, description, buildConfiguration, totalCost, performanceScore, userId } = validatedFields.data;
+  const { name, description, aiResponse, totalCost, performanceScore, userId } = validatedFields.data;
 
   try {
-    const collectionRef = collection(firestore, `users/${userId}/configurations`);
-    await addDoc(collectionRef, {
+    await saveConfiguration(userId, {
       name,
       description: description || 'Build gerada pela IA.',
-      generatedConfiguration: buildConfiguration,
-      totalEstimatedCost: totalCost,
-      performanceScore: performanceScore,
+      aiResponse,
+      details: {
+        type: 'build',
+        totalCost,
+        performanceScore,
+      },
       componentIds: [],
       peripheralIds: [],
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
     });
     return { success: 'Build salva com sucesso!' };
   } catch (e) {
@@ -214,6 +233,45 @@ export async function saveNewBuild(formData: FormData) {
     return { error: 'Falha ao salvar a build no banco de dados.' };
   }
 }
+
+export async function saveUpgradeAnalysis(formData: FormData) {
+    'use server';
+
+    const validatedFields = saveUpgradeSchema.safeParse({
+        name: formData.get('name'),
+        description: formData.get('description'),
+        aiResponse: formData.get('aiResponse'),
+        upgradeCost: formData.get('upgradeCost'),
+        currentValue: formData.get('currentValue'),
+        userId: formData.get('userId'),
+    });
+
+    if (!validatedFields.success) {
+        return { error: 'Dados inválidos para salvar a análise.' };
+    }
+    
+    const { name, description, aiResponse, upgradeCost, currentValue, userId } = validatedFields.data;
+
+    try {
+        await saveConfiguration(userId, {
+            name,
+            description: description || 'Análise de upgrade gerada pela IA.',
+            aiResponse,
+            details: {
+                type: 'upgrade',
+                upgradeCost,
+                currentValue,
+            },
+            componentIds: [],
+            peripheralIds: [],
+        });
+        return { success: 'Análise de upgrade salva com sucesso!' };
+    } catch (e) {
+        console.error(e);
+        return { error: 'Falha ao salvar a análise no banco de dados.' };
+    }
+}
+
 
 export async function getComponentDetails(componentName: string) {
   if (!componentName) {
@@ -265,7 +323,7 @@ export async function getChatResponse(messages: ChatMessage[]) {
     try {
         const input: ChatInput = { history: messages };
         const result = await chatFlow(input);
-        return { response: result.response };
+        return { response: result.response as string };
     } catch (error) {
         console.error(error);
         return { error: 'Falha ao obter resposta do chat.' };

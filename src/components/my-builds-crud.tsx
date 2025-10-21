@@ -44,6 +44,8 @@ import {
   Inbox,
   LogIn,
   Info,
+  DollarSign,
+  Zap,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -68,12 +70,20 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
 import { AiResponseDisplay } from './ai-response-display';
+import { Progress } from './ui/progress';
 
 interface UserConfiguration {
   id: string;
   name: string;
   description: string;
-  generatedConfiguration?: string;
+  aiResponse?: string;
+  details: {
+    type: 'build' | 'upgrade';
+    totalCost?: number;
+    performanceScore?: number;
+    upgradeCost?: number;
+    currentValue?: number;
+  },
   createdAt: {
     seconds: number;
     nanoseconds: number;
@@ -114,9 +124,9 @@ function BuildForm({
     if (!user) return;
     const collectionRef = collection(firestore, `users/${user.uid}/configurations`);
     
-    const data = {
+    const data: Partial<UserConfiguration> = {
       ...values,
-      updatedAt: serverTimestamp(),
+      updatedAt: serverTimestamp() as any,
     };
 
     if (configuration) {
@@ -124,12 +134,12 @@ function BuildForm({
       updateDocumentNonBlocking(docRef, data);
       toast({ title: 'Sucesso!', description: 'Build atualizada.' });
     } else {
+      // Manual creation doesn't have AI response or details
       addDocumentNonBlocking(collectionRef, {
         ...data,
+        aiResponse: "Criado manualmente.",
+        details: { type: 'build' },
         createdAt: serverTimestamp(),
-        componentIds: [],
-        peripheralIds: [],
-        totalEstimatedCost: 0,
       });
       toast({ title: 'Sucesso!', description: 'Nova build salva.' });
     }
@@ -172,6 +182,9 @@ function BuildForm({
 }
 
 function ViewBuildDialog({ config }: { config: UserConfiguration }) {
+    const isUpgrade = config.details?.type === 'upgrade';
+    const isBuild = config.details?.type === 'build';
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -184,9 +197,44 @@ function ViewBuildDialog({ config }: { config: UserConfiguration }) {
                     <DialogTitle>{config.name}</DialogTitle>
                     <DialogDescription>{config.description}</DialogDescription>
                 </DialogHeader>
-                <div className="py-4 max-h-[60vh] overflow-y-auto">
-                    {config.generatedConfiguration ? (
-                        <AiResponseDisplay content={config.generatedConfiguration} />
+                <div className="py-4 max-h-[70vh] overflow-y-auto pr-4">
+                   {isBuild && config.details.totalCost && (
+                     <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                        <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+                            <p className="text-sm text-muted-foreground mb-1">Custo Total</p>
+                            <p className="text-2xl font-bold text-primary flex items-center gap-2">
+                               <DollarSign /> {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(config.details.totalCost)}
+                            </p>
+                        </div>
+                         <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+                            <div className="flex justify-between items-center mb-1">
+                                <p className="text-sm text-muted-foreground flex items-center gap-2"><Zap /> Performance</p>
+                                <p className="text-lg font-bold text-primary">{config.details.performanceScore}/10</p>
+                            </div>
+                            <Progress value={(config.details.performanceScore || 0) * 10} className="h-2 [&>div]:bg-primary" />
+                        </div>
+                    </div>
+                   )}
+                   {isUpgrade && config.details.currentValue && (
+                     <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                        <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+                            <p className="text-sm text-muted-foreground mb-1">Valor do PC Atual</p>
+                            <p className="text-2xl font-bold text-primary flex items-center gap-2">
+                               <DollarSign /> {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(config.details.currentValue)}
+                            </p>
+                        </div>
+                        <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+                            <p className="text-sm text-muted-foreground mb-1">Custo do Upgrade</p>
+                            <p className="text-2xl font-bold text-accent flex items-center gap-2">
+                               <DollarSign /> {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(config.details.upgradeCost || 0)}
+                            </p>
+                        </div>
+                    </div>
+                   )}
+
+
+                    {config.aiResponse ? (
+                        <AiResponseDisplay content={config.aiResponse} />
                     ) : (
                         <p className="text-muted-foreground text-center">Nenhuma configuração detalhada foi salva para esta build.</p>
                     )}

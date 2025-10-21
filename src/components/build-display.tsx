@@ -32,7 +32,7 @@ function SaveBuildForm({ build, onFinished }: { build: GenerateOptimizedBuildOut
     setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
-    formData.append('buildConfiguration', build.buildConfiguration);
+    formData.append('aiResponse', build.buildConfiguration);
     formData.append('totalCost', String(build.totalCost));
     formData.append('performanceScore', String(build.performanceScore));
     formData.append('userId', user!.uid);

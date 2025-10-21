@@ -5,10 +5,8 @@ import { useActionState, useEffect, useState } from 'react';
 import { getUpgradeSuggestions, type UpgradeState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from '@/components/submit-button';
-import { AiResponseDisplay } from './ai-response-display';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { ComponentSelector } from './component-selector';
+import { UpgradeResultDisplay } from './upgrade-result-display';
 
 const initialState: UpgradeState = {
   form: {
@@ -84,39 +82,9 @@ export function UpgradeForm() {
         </SubmitButton>
       </div>
 
-
       {state.status === 'success' && state.result && (
         <div className="pt-6">
-           <Card className="border-primary/30 shadow-sm shadow-primary/10">
-            <CardHeader>
-              <CardTitle className="text-2xl font-headline text-primary">Análise de Upgrade</CardTitle>
-              <CardDescription>Aqui está a análise da IA para sua máquina e as sugestões de upgrade.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
-                  <p className="text-sm text-muted-foreground mb-1">Valor Estimado do seu PC Atual</p>
-                  <p className="text-3xl font-bold text-primary">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(state.result.currentValue)}
-                  </p>
-                </div>
-                 <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
-                  <p className="text-sm text-muted-foreground mb-1">Custo Estimado do Upgrade</p>
-                  <p className="text-3xl font-bold text-accent">
-                    {new Intl.NumberFormat('en-US', {
-                      style: 'currency',
-                      currency: 'USD',
-                    }).format(state.result.upgradeCost)}
-                  </p>
-                </div>
-              </div>
-              <Separator className="my-8 bg-border/50" />
-              <AiResponseDisplay content={state.result.suggestedUpgrades} />
-            </CardContent>
-           </Card>
+           <UpgradeResultDisplay result={state.result} />
         </div>
       )}
     </form>
