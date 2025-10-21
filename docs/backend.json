@@ -1,0 +1,284 @@
+{
+  "entities": {
+    "Component": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Component",
+      "type": "object",
+      "description": "Represents a hardware component, such as CPU, GPU, RAM, etc.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Component entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the component (e.g., Intel Core i9-13900K, NVIDIA GeForce RTX 4090)."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of component (e.g., CPU, GPU, RAM, Motherboard, Storage, etc.)."
+        },
+        "manufacturer": {
+          "type": "string",
+          "description": "The manufacturer of the component (e.g., Intel, NVIDIA, Corsair)."
+        },
+        "model": {
+          "type": "string",
+          "description": "The model number or identifier for the component."
+        },
+        "specifications": {
+          "type": "string",
+          "description": "Detailed technical specifications of the component in JSON format."
+        },
+        "performanceScore": {
+          "type": "number",
+          "description": "A performance benchmark score for the component."
+        },
+        "estimatedCost": {
+          "type": "number",
+          "description": "Estimated cost of the component."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to an image of the component.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "manufacturer",
+        "model",
+        "specifications",
+        "performanceScore",
+        "estimatedCost"
+      ]
+    },
+    "Peripheral": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Peripheral",
+      "type": "object",
+      "description": "Represents a peripheral device, such as a monitor, keyboard, mouse, etc.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Peripheral entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the peripheral (e.g., Dell UltraSharp U2720Q, Logitech G Pro X Superlight)."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of peripheral (e.g., Monitor, Keyboard, Mouse, Headset)."
+        },
+        "manufacturer": {
+          "type": "string",
+          "description": "The manufacturer of the peripheral (e.g., Dell, Logitech)."
+        },
+        "model": {
+          "type": "string",
+          "description": "The model number or identifier for the peripheral."
+        },
+        "specifications": {
+          "type": "string",
+          "description": "Detailed technical specifications of the peripheral."
+        },
+        "estimatedCost": {
+          "type": "number",
+          "description": "Estimated cost of the peripheral."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to an image of the peripheral.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "manufacturer",
+        "model",
+        "specifications",
+        "estimatedCost"
+      ]
+    },
+    "UserConfiguration": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserConfiguration",
+      "type": "object",
+      "description": "Represents a user's saved or simulated desktop configuration.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserConfiguration entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N UserConfiguration)"
+        },
+        "name": {
+          "type": "string",
+          "description": "A descriptive name for the configuration."
+        },
+        "description": {
+          "type": "string",
+          "description": "A more detailed description of the configuration."
+        },
+        "componentIds": {
+          "type": "array",
+          "description": "References to Components. (Relationship: UserConfiguration 1:N Component)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "peripheralIds": {
+          "type": "array",
+          "description": "References to Peripherals. (Relationship: UserConfiguration 1:N Peripheral)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "totalEstimatedCost": {
+          "type": "number",
+          "description": "Total estimated cost for the entire configuration."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of when the configuration was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of when the configuration was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "componentIds",
+        "peripheralIds",
+        "totalEstimatedCost"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the TechUpgrade Pro application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's username."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of when the user account was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of when the user account was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/components/{componentId}",
+        "definition": {
+          "entityName": "Component",
+          "schema": {
+            "$ref": "#/backend/entities/Component"
+          },
+          "description": "Stores hardware components.  No specific authorization requirements beyond basic read/write.  Consider rate limiting writes.",
+          "params": [
+            {
+              "name": "componentId",
+              "description": "The unique identifier of the component."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/peripherals/{peripheralId}",
+        "definition": {
+          "entityName": "Peripheral",
+          "schema": {
+            "$ref": "#/backend/entities/Peripheral"
+          },
+          "description": "Stores peripheral devices. No specific authorization requirements beyond basic read/write. Consider rate limiting writes.",
+          "params": [
+            {
+              "name": "peripheralId",
+              "description": "The unique identifier of the peripheral."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user information.  Rules should restrict write access to the authenticated user's document only.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/configurations/{configId}",
+        "definition": {
+          "entityName": "UserConfiguration",
+          "schema": {
+            "$ref": "#/backend/entities/UserConfiguration"
+          },
+          "description": "Stores user configurations. Access is restricted to the user who owns the configuration, based on the `userId` in the path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "configId",
+              "description": "The unique identifier of the user configuration."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure Authorization Independence, support required QAPs (Queries are not Filters), and maintain data integrity.\n\n*   **Authorization Independence:** UserConfiguration documents are stored under the `/users/{userId}/configurations/{configId}` path. This structure inherently provides authorization independence as access control is based on the path itself and the `userId`. There is no need to fetch parent document to check for authorization.\n*   **QAPs Support:** The chosen structure enables secure list operations. Listing configurations is scoped to the user's own configurations using the path `/users/{userId}/configurations`. Therefore, rules can be written to allow listing configurations only for the authenticated user without additional filtering.\n*   **Structural Segregation:** Different data types (components, peripherals, user configurations, and users) are stored in separate collections according to their distinct security needs. This simplifies security rule definitions by ensuring homogeneity within each collection.\n*   **Access Modeling:** We prioritize path-based ownership for private data like UserConfigurations (`/users/{userId}/configurations/{configId}`).\n\nThis design directly addresses the core design principles and strategy mandates, resulting in a secure, scalable, and debuggable Firestore structure."
+  }
+}
