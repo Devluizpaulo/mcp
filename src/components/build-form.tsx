@@ -43,46 +43,50 @@ export function BuildForm() {
   }, [state, toast]);
 
   return (
-    <form action={formAction} className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="budget">Orçamento (USD)</Label>
-          <Input 
-            type="number" 
-            id="budget" 
-            name="budget" 
-            placeholder="Ex: 1500" 
-            required 
-            defaultValue={state.form.budget}
+    <form action={formAction} className="space-y-8">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid w-full items-center gap-2">
+            <Label htmlFor="budget">Orçamento (USD)</Label>
+            <Input 
+              type="number" 
+              id="budget" 
+              name="budget" 
+              placeholder="Ex: 1500" 
+              required 
+              defaultValue={state.form.budget}
+            />
+          </div>
+          <div className="grid w-full items-center gap-2">
+            <Label htmlFor="intendedUse">Uso Pretendido</Label>
+            <Select name="intendedUse" required defaultValue={state.form.intendedUse}>
+              <SelectTrigger id="intendedUse">
+                <SelectValue placeholder="Selecione um uso" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Gaming">Jogos</SelectItem>
+                <SelectItem value="Video Editing">Edição de Vídeo</SelectItem>
+                <SelectItem value="Work">Trabalho</SelectItem>
+                <SelectItem value="General Use">Uso Geral</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="grid w-full gap-2">
+          <Label htmlFor="existingComponentsBuild">Componentes Existentes (Opcional)</Label>
+          <Textarea
+            id="existingComponentsBuild"
+            name="existingComponents"
+            placeholder="Liste os componentes que você já possui e quer aproveitar..."
+            defaultValue={state.form.existingComponents}
           />
         </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="intendedUse">Uso Pretendido</Label>
-          <Select name="intendedUse" required defaultValue={state.form.intendedUse}>
-            <SelectTrigger id="intendedUse">
-              <SelectValue placeholder="Selecione um uso" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Gaming">Jogos</SelectItem>
-              <SelectItem value="Video Editing">Edição de Vídeo</SelectItem>
-              <SelectItem value="Work">Trabalho</SelectItem>
-              <SelectItem value="General Use">Uso Geral</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
-      <div className="grid w-full gap-2">
-        <Label htmlFor="existingComponentsBuild">Componentes Existentes (Opcional)</Label>
-        <Textarea
-          id="existingComponentsBuild"
-          name="existingComponents"
-          placeholder="Liste os componentes que você já possui e quer aproveitar..."
-          defaultValue={state.form.existingComponents}
-        />
+      <div>
+        <SubmitButton className="w-full sm:w-auto" size="lg">
+          Gerar Nova Configuração
+        </SubmitButton>
       </div>
-      <SubmitButton className="w-full sm:w-auto bg-accent hover:bg-accent/90">
-        Gerar Nova Configuração
-      </SubmitButton>
 
       {state.status === 'success' && state.build && (
         <div className="pt-6">

@@ -62,6 +62,7 @@ export function Combobox({
   name,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState('');
   const allItems = React.useMemo(() => getAllItems(data), [data]);
 
   const renderItems = (items: ComboboxItem[]) => {
@@ -84,6 +85,12 @@ export function Combobox({
       </CommandItem>
     ));
   }
+  
+  React.useEffect(() => {
+    if (!open) {
+      setSearchValue('');
+    }
+  }, [open]);
 
   return (
     <>
@@ -105,23 +112,31 @@ export function Combobox({
           <Command shouldFilter={false}>
             <CommandInput 
               placeholder={searchPlaceholder}
-              value={value}
-              onValueChange={onChange}
+              value={searchValue}
+              onValueChange={setSearchValue}
             />
             <CommandList>
               <CommandEmpty>{emptyPlaceholder}</CommandEmpty>
               {isGrouped(data) ? (
-                data.map((group, index) => (
-                  <React.Fragment key={group.label}>
-                    <CommandGroup heading={group.label}>
-                      {renderItems(group.items.filter(item => item.label.toLowerCase().includes(value.toLowerCase())))}
-                    </CommandGroup>
-                    {index < data.length - 1 && <CommandSeparator />}
-                  </React.Fragment>
-                ))
+                data.map((group, index) => {
+                  const filteredItems = group.items.filter(item => 
+                    item.label.toLowerCase().includes(searchValue.toLowerCase())
+                  );
+                  if (filteredItems.length === 0) return null;
+                  return (
+                    <React.Fragment key={group.label}>
+                      <CommandGroup heading={group.label}>
+                        {renderItems(filteredItems)}
+                      </CommandGroup>
+                      {index < data.length - 1 && <CommandSeparator />}
+                    </React.Fragment>
+                  )
+                })
               ) : (
                 <CommandGroup>
-                  {renderItems(data.filter((item: any) => item.label.toLowerCase().includes(value.toLowerCase())))}
+                   {renderItems((data as ComboboxItem[]).filter(item => 
+                    item.label.toLowerCase().includes(searchValue.toLowerCase())
+                  ))}
                 </CommandGroup>
               )}
             </CommandList>

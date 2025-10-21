@@ -27,7 +27,7 @@ export function UpgradeForm() {
   const [gpu, setGpu] = useState('');
   const [motherboard, setMotherboard] = useState('');
   const [ram, setRam] = useState('');
-  const [storage, setStorage] = useState('');
+  const [storage, setStorage]_useState('');
   const [psu, setPsu] = useState('');
   const [caseComponent, setCaseComponent] = useState('');
   const [cooler, setCooler] = useState('');
@@ -65,32 +65,38 @@ export function UpgradeForm() {
   }, [state, toast]);
 
   return (
-    <form action={formAction} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ComponentSelector category="cpu" label="Processador (CPU)" value={cpu} onChange={setCpu} data={componentsData.cpu} />
-        <ComponentSelector category="cooler" label="Cooler do Processador" value={cooler} onChange={setCooler} data={componentsData.cooler} />
-        <ComponentSelector category="gpu" label="Placa de Vídeo (GPU)" value={gpu} onChange={setGpu} data={componentsData.gpu} />
-        <ComponentSelector category="motherboard" label="Placa-mãe" value={motherboard} onChange={setMotherboard} data={componentsData.motherboard} />
-        <ComponentSelector category="ram" label="Memória RAM" value={ram} onChange={setRam} data={componentsData.ram} />
-        <ComponentSelector category="storage" label="Armazenamento (SSD/HD)" value={storage} onChange={setStorage} data={componentsData.storage} />
-        <ComponentSelector category="psu" label="Fonte (PSU)" value={psu} onChange={setPsu} data={componentsData.psu} />
-        <ComponentSelector category="case" label="Gabinete" value={caseComponent} onChange={setCaseComponent} data={componentsData.case} />
+    <form action={formAction} className="space-y-8">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+          <ComponentSelector category="cpu" label="Processador (CPU)" value={cpu} onChange={setCpu} data={componentsData.cpu} />
+          <ComponentSelector category="cooler" label="Cooler do Processador" value={cooler} onChange={setCooler} data={componentsData.cooler} />
+          <ComponentSelector category="gpu" label="Placa de Vídeo (GPU)" value={gpu} onChange={setGpu} data={componentsData.gpu} />
+          <ComponentSelector category="motherboard" label="Placa-mãe" value={motherboard} onChange={setMotherboard} data={componentsData.motherboard} />
+          <ComponentSelector category="ram" label="Memória RAM" value={ram} onChange={setRam} data={componentsData.ram} />
+          <ComponentSelector category="storage" label="Armazenamento (SSD/HD)" value={storage} onChange={setStorage} data={componentsData.storage} />
+          <ComponentSelector category="psu" label="Fonte (PSU)" value={psu} onChange={setPsu} data={componentsData.psu} />
+          <ComponentSelector category="case" label="Gabinete" value={caseComponent} onChange={setCaseComponent} data={componentsData.case} />
+        </div>
       </div>
-      <SubmitButton className="w-full sm:w-auto bg-accent hover:bg-accent/90">
-        Obter Sugestões de Upgrade
-      </SubmitButton>
+      
+      <div>
+        <SubmitButton className="w-full sm:w-auto" size="lg">
+          Obter Sugestões de Upgrade
+        </SubmitButton>
+      </div>
+
 
       {state.status === 'success' && state.result && (
         <div className="pt-6">
-           <Card className="border-accent">
+           <Card className="border-primary/30 shadow-sm shadow-primary/10">
             <CardHeader>
-              <CardTitle className="text-2xl font-headline">Análise de Upgrade</CardTitle>
+              <CardTitle className="text-2xl font-headline text-primary">Análise de Upgrade</CardTitle>
               <CardDescription>Aqui está a análise da IA para sua máquina e as sugestões de upgrade.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid sm:grid-cols-2 gap-6 mb-6">
-                <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4">
-                  <p className="text-sm text-muted-foreground">Valor Estimado do seu PC Atual</p>
+              <div className="grid sm:grid-cols-2 gap-6 mb-8">
+                <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+                  <p className="text-sm text-muted-foreground mb-1">Valor Estimado do seu PC Atual</p>
                   <p className="text-3xl font-bold text-primary">
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
@@ -98,8 +104,8 @@ export function UpgradeForm() {
                     }).format(state.result.currentValue)}
                   </p>
                 </div>
-                 <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4">
-                  <p className="text-sm text-muted-foreground">Custo Estimado do Upgrade</p>
+                 <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+                  <p className="text-sm text-muted-foreground mb-1">Custo Estimado do Upgrade</p>
                   <p className="text-3xl font-bold text-accent">
                     {new Intl.NumberFormat('en-US', {
                       style: 'currency',
@@ -108,7 +114,7 @@ export function UpgradeForm() {
                   </p>
                 </div>
               </div>
-              <Separator className="my-6" />
+              <Separator className="my-8 bg-border/50" />
               <AiResponseDisplay content={state.result.suggestedUpgrades} />
             </CardContent>
            </Card>

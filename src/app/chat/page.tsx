@@ -3,9 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function ChatPage() {
   return (
-    <div className="flex flex-1 flex-col gap-8 p-4 md:p-8">
-        <div className="max-w-4xl mx-auto w-full">
-            <Card className="border-primary/20">
+    <div className="flex flex-1">
+        <div className="w-full max-w-4xl mx-auto p-4 md:p-8">
+            <Card className="border-primary/20 h-full">
               <CardHeader>
                 <CardTitle>Chat com o MCP</CardTitle>
                 <CardDescription>

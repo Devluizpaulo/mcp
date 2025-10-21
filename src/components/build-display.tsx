@@ -13,15 +13,15 @@ interface BuildDisplayProps {
 
 export function BuildDisplay({ build }: BuildDisplayProps) {
   return (
-    <Card className="border-accent">
+    <Card className="border-primary/30 shadow-sm shadow-primary/10">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Configuração Recomendada</CardTitle>
+        <CardTitle className="text-2xl font-headline text-primary">Configuração Recomendada</CardTitle>
         <CardDescription>Aqui está a configuração que nossa IA montou para você.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid sm:grid-cols-2 gap-6 mb-6">
-          <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4">
-            <p className="text-sm text-muted-foreground">Valor Estimado do Build</p>
+        <div className="grid sm:grid-cols-2 gap-6 mb-8">
+          <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+            <p className="text-sm text-muted-foreground mb-1">Valor Estimado do Build</p>
             <p className="text-3xl font-bold text-primary">
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
@@ -29,15 +29,15 @@ export function BuildDisplay({ build }: BuildDisplayProps) {
               }).format(build.totalCost)}
             </p>
           </div>
-          <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4">
-            <div className="flex justify-between items-center mb-1">
+          <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4 border">
+            <div className="flex justify-between items-center mb-2">
                 <p className="text-sm text-muted-foreground">Pontuação de Performance</p>
                 <p className="text-lg font-bold text-primary">{build.performanceScore}/10</p>
             </div>
-            <Progress value={build.performanceScore * 10} className="h-2" />
+            <Progress value={build.performanceScore * 10} className="h-2 [&>div]:bg-primary" />
           </div>
         </div>
-        <Separator className="my-6" />
+        <Separator className="my-8 bg-border/50" />
         <AiResponseDisplay content={build.buildConfiguration} />
       </CardContent>
     </Card>

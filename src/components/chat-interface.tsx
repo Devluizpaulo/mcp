@@ -75,7 +75,7 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-[60vh]">
+    <div className="flex flex-col h-[70vh]">
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-6">
           {messages.map((message, index) => (
@@ -93,7 +93,7 @@ export function ChatInterface() {
                 </Avatar>
               )}
               <div
-                className={`max-w-md rounded-lg p-3 ${
+                className={`max-w-xl rounded-lg p-3 text-sm ${
                   message.role === 'user'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
@@ -101,9 +101,9 @@ export function ChatInterface() {
               >
                 {message.role === 'model' && message.content === '...' ? (
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-foreground/50 rounded-full animate-pulse delay-0"></div>
-                        <div className="w-2 h-2 bg-foreground/50 rounded-full animate-pulse delay-200"></div>
-                        <div className="w-2 h-2 bg-foreground/50 rounded-full animate-pulse delay-400"></div>
+                        <div className="w-2 h-2 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0s'}}></div>
+                        <div className="w-2 h-2 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                        <div className="w-2 h-2 bg-foreground/50 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
                     </div>
                 ) : (
                   <AiResponseDisplay content={message.content} />
@@ -120,7 +120,9 @@ export function ChatInterface() {
           ))}
            {messages.length === 0 && (
                 <div className="text-center text-muted-foreground pt-10">
-                    <p>Converse com o MCP para tirar dúvidas sobre hardware, pedir sugestões ou qualquer outra coisa relacionada a PCs.</p>
+                    <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground/50" />
+                    <h3 className="mt-4 text-lg font-semibold text-foreground">Converse com o MCP</h3>
+                    <p className="mt-2 text-sm">Tire suas dúvidas sobre hardware, peça sugestões ou qualquer outra coisa relacionada a PCs.</p>
                 </div>
             )}
         </div>
@@ -132,7 +134,7 @@ export function ChatInterface() {
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Digite sua mensagem..."
+          placeholder="Digite sua mensagem para o MCP..."
           className="flex-1"
           disabled={isLoading}
         />
