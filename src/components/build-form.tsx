@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -29,7 +29,7 @@ const initialState: BuildState = {
 };
 
 export function BuildForm() {
-  const [state, formAction] = useFormState(getNewBuild, initialState);
+  const [state, formAction] = useActionState(getNewBuild, initialState);
   const { toast } = useToast();
 
   useEffect(() => {

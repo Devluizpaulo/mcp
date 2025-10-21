@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -19,7 +19,7 @@ const initialState: UpgradeState = {
 };
 
 export function UpgradeForm() {
-  const [state, formAction] = useFormState(getUpgradeSuggestions, initialState);
+  const [state, formAction] = useActionState(getUpgradeSuggestions, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
