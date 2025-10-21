@@ -27,7 +27,7 @@ export function UpgradeForm() {
   const [gpu, setGpu] = useState('');
   const [motherboard, setMotherboard] = useState('');
   const [ram, setRam] = useState('');
-  const [storage, setStorage]_useState('');
+  const [storage, setStorage] = useState('');
   const [psu, setPsu] = useState('');
   const [caseComponent, setCaseComponent] = useState('');
   const [cooler, setCooler] = useState('');
