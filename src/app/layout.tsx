@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { DashboardLayout } from '@/components/dashboard-layout';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'MCP - Master Component Planner',
@@ -29,7 +30,9 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
-        <DashboardLayout>{children}</DashboardLayout>
+        <FirebaseClientProvider>
+          <DashboardLayout>{children}</DashboardLayout>
+        </FirebaseClientProvider>
         <Toaster />
       </body>
     </html>
