@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
+import { DashboardLayout } from '@/components/dashboard-layout';
 
 export const metadata: Metadata = {
   title: 'MCP - Master Component Planner',
@@ -28,7 +29,7 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
-        {children}
+        <DashboardLayout>{children}</DashboardLayout>
         <Toaster />
       </body>
     </html>
