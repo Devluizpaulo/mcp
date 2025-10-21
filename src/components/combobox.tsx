@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -12,6 +13,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from '@/components/ui/command';
 import {
   Popover,
@@ -19,8 +21,29 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
+type ComboboxItem = { value: string; label: string };
+
+interface ComboboxGroup {
+  label: string;
+  items: ComboboxItem[];
+}
+
+type ComboboxData = ComboboxItem[] | ComboboxGroup[];
+
+function isGrouped(data: ComboboxData): data is ComboboxGroup[] {
+  return data.length > 0 && 'items' in data[0] && 'label' in data[0];
+}
+
+function getAllItems(data: ComboboxData): ComboboxItem[] {
+  if (isGrouped(data)) {
+    return data.flatMap(group => group.items);
+  }
+  return data;
+}
+
+
 interface ComboboxProps {
-  items: { value: string; label: string }[];
+  items: ComboboxData;
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
@@ -30,7 +53,7 @@ interface ComboboxProps {
 }
 
 export function Combobox({
-  items,
+  items: data,
   value,
   onChange,
   placeholder,
@@ -39,6 +62,28 @@ export function Combobox({
   name,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const allItems = React.useMemo(() => getAllItems(data), [data]);
+
+  const renderItems = (items: ComboboxItem[]) => {
+    return items.map((item) => (
+      <CommandItem
+        key={item.value}
+        value={item.value}
+        onSelect={(currentValue) => {
+          onChange(currentValue === value ? '' : currentValue);
+          setOpen(false);
+        }}
+      >
+        <Check
+          className={cn(
+            'mr-2 h-4 w-4',
+            value === item.value ? 'opacity-100' : 'opacity-0'
+          )}
+        />
+        {item.label}
+      </CommandItem>
+    ));
+  }
 
   return (
     <>
@@ -51,7 +96,7 @@ export function Combobox({
             className="w-full justify-between"
           >
             {value
-              ? items.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label
+              ? allItems.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label
               : placeholder}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -61,26 +106,20 @@ export function Combobox({
             <CommandInput placeholder={searchPlaceholder} />
             <CommandList>
               <CommandEmpty>{emptyPlaceholder}</CommandEmpty>
-              <CommandGroup>
-                {items.map((item) => (
-                  <CommandItem
-                    key={item.value}
-                    value={item.value}
-                    onSelect={(currentValue) => {
-                      onChange(currentValue === value ? '' : currentValue);
-                      setOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        value === item.value ? 'opacity-100' : 'opacity-0'
-                      )}
-                    />
-                    {item.label}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              {isGrouped(data) ? (
+                data.map((group, index) => (
+                  <React.Fragment key={group.label}>
+                    <CommandGroup heading={group.label}>
+                      {renderItems(group.items)}
+                    </CommandGroup>
+                    {index < data.length - 1 && <CommandSeparator />}
+                  </React.Fragment>
+                ))
+              ) : (
+                <CommandGroup>
+                  {renderItems(data)}
+                </CommandGroup>
+              )}
             </CommandList>
           </Command>
         </PopoverContent>
