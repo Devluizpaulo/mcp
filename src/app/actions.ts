@@ -27,7 +27,11 @@ export interface BuildState {
 }
 
 const upgradeSchema = z.object({
-  existingComponents: z.string().min(10, 'Por favor, liste seus componentes atuais com mais detalhes.'),
+  cpu: z.string().min(3, 'Por favor, insira seu processador (CPU).'),
+  gpu: z.string().min(3, 'Por favor, insira sua placa de vídeo (GPU).'),
+  motherboard: z.string().min(3, 'Por favor, insira sua placa-mãe.'),
+  ram: z.string().min(3, 'Por favor, insira sua memória RAM.'),
+  storage: z.string().min(3, 'Por favor, insira seu armazenamento.'),
 });
 
 const buildSchema = z.object({
@@ -40,38 +44,50 @@ export async function getUpgradeSuggestions(
   prevState: UpgradeState,
   formData: FormData
 ): Promise<UpgradeState> {
-  const existingComponents = formData.get('existingComponents') as string;
+  
+  const components = {
+    cpu: formData.get('cpu') as string,
+    gpu: formData.get('gpu') as string,
+    motherboard: formData.get('motherboard') as string,
+    ram: formData.get('ram') as string,
+    storage: formData.get('storage') as string,
+  };
+  
+  const jsonComponents = JSON.stringify(components);
 
-  const validatedFields = upgradeSchema.safeParse({
-    existingComponents,
-  });
+  const validatedFields = upgradeSchema.safeParse(components);
 
   if (!validatedFields.success) {
+    const firstError = Object.values(validatedFields.error.flatten().fieldErrors)[0]?.[0];
     return {
       ...prevState,
       status: 'error',
-      message: validatedFields.error.flatten().fieldErrors.existingComponents?.[0] || "Erro de validação",
-      form: { existingComponents },
+      message: firstError || "Erro de validação",
+      form: { existingComponents: jsonComponents },
     };
   }
+  
+  const existingComponentsString = Object.entries(validatedFields.data)
+      .map(([key, value]) => `${key.toUpperCase()}: ${value}`)
+      .join(', ');
 
   try {
     const result = await suggestUpgradesBasedOnExistingComponents({
-      existingComponents: validatedFields.data.existingComponents,
+      existingComponents: existingComponentsString,
     });
     return {
       ...prevState,
       status: 'success',
       message: 'Sugestões geradas com sucesso!',
       suggestions: result.suggestedUpgrades,
-      form: { existingComponents },
+      form: { existingComponents: jsonComponents },
     };
   } catch (error) {
     return {
       ...prevState,
       status: 'error',
       message: 'Ocorreu um erro ao gerar sugestões. Por favor, tente novamente.',
-      form: { existingComponents },
+      form: { existingComponents: jsonComponents },
     };
   }
 }
