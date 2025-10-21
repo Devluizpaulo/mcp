@@ -1,7 +1,7 @@
 export const componentsData = {
   cpu: [
     {
-      label: 'Intel',
+      label: 'Intel (Consumidor)',
       items: [
         // 14th Gen
         { value: 'intel-i9-14900k', label: 'Core i9-14900K' },
@@ -61,7 +61,22 @@ export const componentsData = {
       ],
     },
     {
-      label: 'AMD',
+      label: 'Intel (Workstation/Servidor)',
+      items: [
+        // Xeon W (LGA 4677)
+        { value: 'intel-xeon-w9-3495x', label: 'Xeon w9-3495X' },
+        { value: 'intel-xeon-w7-3465x', label: 'Xeon w7-3465X' },
+        { value: 'intel-xeon-w5-3435x', label: 'Xeon w5-3435X' },
+        // Xeon W (LGA 1700)
+        { value: 'intel-xeon-w7-2495x', label: 'Xeon w7-2495X' },
+        { value: 'intel-xeon-w5-2455x', label: 'Xeon w5-2455X' },
+        // Xeon Scalable
+        { value: 'intel-xeon-platinum-8480plus', label: 'Xeon Platinum 8480+' },
+        { value: 'intel-xeon-gold-6448h', label: 'Xeon Gold 6448H' },
+      ],
+    },
+    {
+      label: 'AMD (Consumidor)',
       items: [
         // Ryzen 7000
         { value: 'amd-ryzen-9-7950x3d', label: 'Ryzen 9 7950X3D' },
@@ -98,6 +113,22 @@ export const componentsData = {
         { value: 'amd-ryzen-7-1700x', label: 'Ryzen 7 1700X' },
         { value: 'amd-ryzen-5-1600x', label: 'Ryzen 5 1600X' },
         { value: 'amd-ryzen-3-1300x', label: 'Ryzen 3 1300X' },
+      ],
+    },
+    {
+      label: 'AMD (Workstation/Servidor)',
+      items: [
+        // Threadripper PRO 7000
+        { value: 'amd-threadripper-pro-7995wx', label: 'Threadripper PRO 7995WX' },
+        { value: 'amd-threadripper-pro-7975wx', label: 'Threadripper PRO 7975WX' },
+        { value: 'amd-threadripper-pro-7965wx', label: 'Threadripper PRO 7965WX' },
+        // Threadripper 7000
+        { value: 'amd-threadripper-7980x', label: 'Threadripper 7980X' },
+        { value: 'amd-threadripper-7970x', label: 'Threadripper 7970X' },
+        { value: 'amd-threadripper-7960x', label: 'Threadripper 7960X' },
+        // EPYC
+        { value: 'amd-epyc-9654', label: 'EPYC 9654 (Genoa)' },
+        { value: 'amd-epyc-7763', label: 'EPYC 7763 (Milan)' },
       ],
     },
   ],
@@ -182,6 +213,29 @@ export const componentsData = {
     },
   ],
   motherboard: [
+    {
+      label: 'Socket sTR5 (AMD Threadripper)',
+      items: [
+        { value: 'asus-pro-ws-trx50-sage-wifi', label: 'ASUS Pro WS TRX50-SAGE WIFI' },
+        { value: 'gigabyte-trx50-aero-d', label: 'Gigabyte TRX50 AERO D' },
+        { value: 'asrock-trx50-ws', label: 'ASRock TRX50 WS' },
+      ]
+    },
+    {
+      label: 'Socket SP5 (AMD EPYC)',
+      items: [
+        { value: 'supermicro-h13dsg-o-cpu', label: 'Supermicro H13DSG-O-CPU' },
+        { value: 'asrock-rack-genoad8x-2t', label: 'ASRock Rack GENOAD8X-2T' },
+      ]
+    },
+    {
+      label: 'Socket LGA 4677 (Intel Xeon)',
+      items: [
+        { value: 'asus-pro-ws-w790e-sage-se', label: 'ASUS Pro WS W790E-SAGE SE' },
+        { value: 'asrock-w790-ws', label: 'ASRock W790 WS' },
+        { value: 'supermicro-x13swa-tf', label: 'Supermicro X13SWA-TF' },
+      ]
+    },
     {
       label: 'Socket AM5 (AMD Ryzen 7000)',
       items: [
