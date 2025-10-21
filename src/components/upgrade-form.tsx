@@ -9,7 +9,6 @@ import { AiResponseDisplay } from './ai-response-display';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ComponentSelector } from './component-selector';
-import { componentsData } from '@/lib/components-data';
 
 const initialState: UpgradeState = {
   form: {
@@ -68,14 +67,14 @@ export function UpgradeForm() {
     <form action={formAction} className="space-y-8">
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-          <ComponentSelector category="cpu" label="Processador (CPU)" value={cpu} onChange={setCpu} data={componentsData.cpu} />
-          <ComponentSelector category="cooler" label="Cooler do Processador" value={cooler} onChange={setCooler} data={componentsData.cooler} />
-          <ComponentSelector category="gpu" label="Placa de Vídeo (GPU)" value={gpu} onChange={setGpu} data={componentsData.gpu} />
-          <ComponentSelector category="motherboard" label="Placa-mãe" value={motherboard} onChange={setMotherboard} data={componentsData.motherboard} />
-          <ComponentSelector category="ram" label="Memória RAM" value={ram} onChange={setRam} data={componentsData.ram} />
-          <ComponentSelector category="storage" label="Armazenamento (SSD/HD)" value={storage} onChange={setStorage} data={componentsData.storage} />
-          <ComponentSelector category="psu" label="Fonte (PSU)" value={psu} onChange={setPsu} data={componentsData.psu} />
-          <ComponentSelector category="case" label="Gabinete" value={caseComponent} onChange={setCaseComponent} data={componentsData.case} />
+          <ComponentSelector category="cpu" label="Processador (CPU)" value={cpu} onChange={setCpu} />
+          <ComponentSelector category="cooler" label="Cooler do Processador" value={cooler} onChange={setCooler} />
+          <ComponentSelector category="gpu" label="Placa de Vídeo (GPU)" value={gpu} onChange={setGpu} />
+          <ComponentSelector category="motherboard" label="Placa-mãe" value={motherboard} onChange={setMotherboard} />
+          <ComponentSelector category="ram" label="Memória RAM" value={ram} onChange={setRam} />
+          <ComponentSelector category="storage" label="Armazenamento (SSD/HD)" value={storage} onChange={setStorage} />
+          <ComponentSelector category="psu" label="Fonte (PSU)" value={psu} onChange={setPsu} />
+          <ComponentSelector category="case" label="Gabinete" value={caseComponent} onChange={setCaseComponent} />
         </div>
       </div>
       

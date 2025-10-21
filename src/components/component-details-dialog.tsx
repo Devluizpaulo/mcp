@@ -14,19 +14,14 @@ import { Info, Loader2 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { getComponentDetails } from '@/app/actions';
 import { AiResponseDisplay } from './ai-response-display';
-import { componentsData } from '@/lib/components-data';
 
 interface ComponentDetailsDialogProps {
-  componentValue: string;
-  componentLabel: string;
-  category: keyof typeof componentsData;
+  componentName: string;
   disabled: boolean;
 }
 
 export function ComponentDetailsDialog({
-  componentValue,
-  componentLabel,
-  category,
+  componentName,
   disabled,
 }: ComponentDetailsDialogProps) {
   const [open, setOpen] = useState(false);
@@ -35,13 +30,13 @@ export function ComponentDetailsDialog({
   const [error, setError] = useState<string | null>(null);
 
   const handleFetchDetails = useCallback(async () => {
-    if (!componentValue) return;
+    if (!componentName) return;
 
     setIsLoading(true);
     setError(null);
     setDetails(null);
 
-    const result = await getComponentDetails(componentValue, category);
+    const result = await getComponentDetails(componentName);
 
     if (result.error) {
       setError(result.error);
@@ -50,7 +45,7 @@ export function ComponentDetailsDialog({
     }
 
     setIsLoading(false);
-  }, [componentValue, category]);
+  }, [componentName]);
 
   const onOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
@@ -80,7 +75,7 @@ export function ComponentDetailsDialog({
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>Detalhes do Componente</DialogTitle>
-          <DialogDescription>{componentLabel}</DialogDescription>
+          <DialogDescription>{componentName}</DialogDescription>
         </DialogHeader>
         <div className="py-4 max-h-[60vh] overflow-y-auto">
           {isLoading && (

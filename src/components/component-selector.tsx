@@ -1,11 +1,12 @@
 
 'use client';
 
-import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power, Fan } from 'lucide-react';
+import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power, Fan, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Combobox } from './combobox';
 import { ComponentDetailsDialog } from './component-details-dialog';
-import { componentsData } from '@/lib/components-data';
+import { useEffect, useState } from 'react';
+import { getComponentsByType, type Component } from '@/app/actions';
 
 const iconMap: { [key: string]: React.ElementType } = {
   cpu: Cpu,
@@ -18,32 +19,35 @@ const iconMap: { [key: string]: React.ElementType } = {
   case: PcCase,
 };
 
-type ComboboxItem = { value: string; label: string };
-interface ComboboxGroup {
-  label: string;
-  items: ComboboxItem[];
-}
-type ComboboxData = ComboboxItem[] | ComboboxGroup[];
-
 interface ComponentSelectorProps {
-  category: keyof typeof componentsData;
+  category: keyof typeof iconMap;
   label: string;
   value: string;
   onChange: (value: string) => void;
-  data: ComboboxData;
 }
 
-const findLabel = (data: ComboboxData, value: string): string => {
-    if (!value) return '';
-    const allItems = 'items' in data[0] 
-        ? (data as ComboboxGroup[]).flatMap(group => group.items)
-        : (data as ComboboxItem[]);
-    const item = allItems.find(i => i.value.toLowerCase() === value.toLowerCase());
-    return item ? item.label : value;
-};
-
-export function ComponentSelector({ category, label, value, onChange, data }: ComponentSelectorProps) {
+export function ComponentSelector({ category, label, value, onChange }: ComponentSelectorProps) {
   const Icon = iconMap[category] || Cpu;
+  const [items, setItems] = useState<Component[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchComponents = async () => {
+      setIsLoading(true);
+      setError(null);
+      const result = await getComponentsByType(category);
+      if(result.data) {
+        setItems(result.data);
+      } else {
+        setError(result.error || 'Falha ao carregar componentes.');
+      }
+      setIsLoading(false);
+    }
+    fetchComponents();
+  }, [category]);
+
+  const comboboxItems = items.map(item => ({ value: item.name, label: item.name }));
 
   return (
     <div className="grid w-full items-center gap-2">
@@ -52,20 +56,29 @@ export function ComponentSelector({ category, label, value, onChange, data }: Co
         {label}
       </Label>
       <div className="flex items-center gap-2">
-        <Combobox
-          name={category}
-          items={data}
-          value={value}
-          onChange={onChange}
-          placeholder={`Selecione um(a) ${label}`}
-          searchPlaceholder={`Procurar ${label}...`}
-          emptyPlaceholder={`Nenhum(a) ${label} encontrado(a).`}
-        />
+        {isLoading ? (
+            <div className="flex items-center justify-center w-full h-10 border rounded-md text-sm text-muted-foreground">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Carregando...
+            </div>
+        ) : error ? (
+            <div className="flex items-center justify-center w-full h-10 border rounded-md text-sm text-destructive">
+                {error}
+            </div>
+        ) : (
+            <Combobox
+              name={category}
+              items={comboboxItems}
+              value={value}
+              onChange={onChange}
+              placeholder={`Selecione um(a) ${label}`}
+              searchPlaceholder={`Procurar ${label}...`}
+              emptyPlaceholder={`Nenhum(a) ${label} encontrado(a).`}
+            />
+        )}
         <ComponentDetailsDialog
-          componentValue={value}
-          componentLabel={findLabel(data, value)}
-          category={category}
-          disabled={!value}
+          componentName={value}
+          disabled={!value || isLoading}
         />
       </div>
     </div>

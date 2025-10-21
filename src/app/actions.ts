@@ -7,15 +7,10 @@ import type { SuggestUpgradesBasedOnExistingComponentsOutput } from '@/ai/flows/
 import { generateOptimizedBuildFromBudget } from '@/ai/flows/generate-optimized-build-from-budget';
 import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized-build-from-budget';
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
-import { componentsData } from '@/lib/components-data';
 import { chat as chatFlow } from '@/ai/flows/chat';
 import type { ChatInput } from '@/ai/flows/chat';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { initializeFirebase } from '@/firebase';
-
+import { addDoc, collection, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
+import { initializeServerFirebase } from '@/firebase/server-init';
 
 export interface UpgradeState {
   form: {
@@ -42,12 +37,11 @@ export interface ChatMessage {
     content: string;
 }
 
-const findLabel = (category: keyof typeof componentsData, value: string) => {
-    if (!value) return value;
-    const items = componentsData[category];
-    const item = items.flatMap(group => group.items).find(i => i.value.toLowerCase() === value.toLowerCase());
-    return item ? item.label : value;
-};
+export interface Component {
+  id: string;
+  name: string;
+  type: string;
+}
 
 const upgradeSchema = z.object({
   cpu: z.string().min(1, 'Por favor, selecione seu processador (CPU).'),
@@ -108,8 +102,7 @@ export async function getUpgradeSuggestions(
   const existingComponentsString = Object.entries(validatedFields.data)
       .map(([key, value]) => {
           if (!value) return null;
-          const label = findLabel(key as keyof typeof componentsData, value);
-          return `${key.toUpperCase()}: ${label}`;
+          return `${key.toUpperCase()}: ${value}`;
       })
       .filter(Boolean)
       .join(', ');
@@ -199,12 +192,12 @@ export async function saveNewBuild(formData: FormData) {
     return { error: 'Dados inválidos para salvar a build.' };
   }
   
-  const { firestore } = initializeFirebase();
+  const { firestore } = await initializeServerFirebase();
   const { name, description, buildConfiguration, totalCost, performanceScore, userId } = validatedFields.data;
 
   try {
     const collectionRef = collection(firestore, `users/${userId}/configurations`);
-    await addDocumentNonBlocking(collectionRef, {
+    await addDoc(collectionRef, {
       name,
       description: description || 'Build gerada pela IA.',
       generatedConfiguration: buildConfiguration,
@@ -222,19 +215,45 @@ export async function saveNewBuild(formData: FormData) {
   }
 }
 
-export async function getComponentDetails(componentName: string, category: keyof typeof componentsData) {
+export async function getComponentDetails(componentName: string) {
   if (!componentName) {
     return { error: 'Nome do componente não fornecido.' };
   }
   
-  const label = findLabel(category, componentName);
-
   try {
-    const result = await getComponentDetailsFlow({ componentName: label });
+    const result = await getComponentDetailsFlow({ componentName: componentName });
     return { details: result.details };
   } catch (error) {
     console.error(error);
     return { error: 'Falha ao buscar detalhes do componente.' };
+  }
+}
+
+export async function getComponentsByType(type: string): Promise<{ data?: Component[]; error?: string }> {
+  if (!type) {
+    return { error: 'Tipo de componente não fornecido.' };
+  }
+
+  try {
+    const { firestore } = await initializeServerFirebase();
+    const componentsCollection = collection(firestore, 'components');
+    const q = query(componentsCollection, where('type', '==', type));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      return { data: [] };
+    }
+
+    const components = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      name: doc.data().name,
+      type: doc.data().type,
+    })) as Component[];
+
+    return { data: components };
+  } catch (error) {
+    console.error(`Falha ao buscar componentes do tipo ${type}:`, error);
+    return { error: `Falha ao buscar componentes do tipo ${type}.` };
   }
 }
 

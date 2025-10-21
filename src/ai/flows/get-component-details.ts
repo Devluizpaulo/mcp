@@ -1,15 +1,16 @@
 
 'use server';
 /**
- * @fileOverview Fetches detailed information about a specific computer component.
+ * @fileOverview Fetches detailed information about a specific computer component using database tools.
  *
  * - getComponentDetails - A function that fetches details for a given component name.
  * - GetComponentDetailsInput - The input type for the getComponentDetails function.
  * - GetComponentDetailsOutput - The return type for the getComponentDetails function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import { getComponentDetailsTool } from '@/ai/tools/component-tools';
 
 const GetComponentDetailsInputSchema = z.object({
   componentName: z.string().describe('The name of the computer component to get details for.'),
@@ -35,9 +36,13 @@ export async function getComponentDetails(
 
 const prompt = ai.definePrompt({
   name: 'getComponentDetailsPrompt',
-  input: {schema: GetComponentDetailsInputSchema},
-  output: {schema: GetComponentDetailsOutputSchema},
-  prompt: `You are a PC hardware expert and a great teacher. Provide a detailed and educational analysis for the following component: {{{componentName}}}.
+  input: { schema: z.object({ componentDetails: z.string() }) },
+  output: { schema: GetComponentDetailsOutputSchema },
+  tools: [getComponentDetailsTool],
+  prompt: `You are a PC hardware expert and a great teacher. Based on the following component data (in JSON format), provide a detailed and educational analysis.
+
+  Component Data:
+  {{{componentDetails}}}
 
   Structure your response clearly with the following sections, using Markdown for formatting:
   - **Component:** The full name of the component.
@@ -55,9 +60,21 @@ const getComponentDetailsFlow = ai.defineFlow(
     name: 'getComponentDetailsFlow',
     inputSchema: GetComponentDetailsInputSchema,
     outputSchema: GetComponentDetailsOutputSchema,
+    tools: [getComponentDetailsTool],
   },
-  async input => {
-    const {output} = await prompt(input);
+  async ({ componentName }) => {
+    // First, use the tool to get the structured data from Firestore.
+    const detailsObject = await getComponentDetailsTool(componentName);
+
+    if (!detailsObject) {
+      return { details: 'Desculpe, não consegui encontrar detalhes para este componente no banco de dados.' };
+    }
+    
+    // Now, pass the structured data to the prompt to get a formatted, user-friendly explanation.
+    const { output } = await prompt({
+      componentDetails: JSON.stringify(detailsObject, null, 2),
+    });
+    
     return output!;
   }
 );
