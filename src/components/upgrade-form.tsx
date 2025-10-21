@@ -7,7 +7,7 @@ import { getUpgradeSuggestions, type UpgradeState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from '@/components/submit-button';
 import { AiResponseDisplay } from './ai-response-display';
-import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, Case, Power } from 'lucide-react';
+import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power } from 'lucide-react';
 import { Combobox } from './combobox';
 import { componentsData } from '@/lib/components-data';
 
@@ -157,7 +157,7 @@ export function UpgradeForm() {
         </div>
         <div className="grid w-full items-center gap-2 md:col-span-2">
           <Label htmlFor="case" className="flex items-center gap-2">
-            <Case className="h-5 w-5 text-muted-foreground" />
+            <PcCase className="h-5 w-5 text-muted-foreground" />
             Gabinete
           </Label>
            <Combobox
