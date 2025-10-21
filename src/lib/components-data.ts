@@ -18,13 +18,46 @@ export const componentsData = {
         { value: 'intel-i5-12600k', label: 'Core i5-12600K' },
         { value: 'intel-i5-12400f', label: 'Core i5-12400F' },
         { value: 'intel-i3-12100f', label: 'Core i3-12100F' },
-        // Older Gens
+        // 11th Gen
         { value: 'intel-i9-11900k', label: 'Core i9-11900K' },
         { value: 'intel-i7-11700k', label: 'Core i7-11700K' },
         { value: 'intel-i5-11600k', label: 'Core i5-11600K' },
+        { value: 'intel-i5-11400f', label: 'Core i5-11400F' },
+        // 10th Gen
         { value: 'intel-i9-10900k', label: 'Core i9-10900K' },
         { value: 'intel-i7-10700k', label: 'Core i7-10700K' },
         { value: 'intel-i5-10600k', label: 'Core i5-10600K' },
+        { value: 'intel-i5-10400f', label: 'Core i5-10400F' },
+        { value: 'intel-i3-10100f', label: 'Core i3-10100F' },
+        // 9th Gen
+        { value: 'intel-i9-9900k', label: 'Core i9-9900K' },
+        { value: 'intel-i7-9700k', label: 'Core i7-9700K' },
+        { value: 'intel-i5-9600k', label: 'Core i5-9600K' },
+        { value: 'intel-i5-9400f', label: 'Core i5-9400F' },
+        // 8th Gen
+        { value: 'intel-i7-8700k', label: 'Core i7-8700K' },
+        { value: 'intel-i5-8600k', label: 'Core i5-8600K' },
+        { value: 'intel-i5-8400', label: 'Core i5-8400' },
+        { value: 'intel-i3-8100', label: 'Core i3-8100' },
+        // 7th Gen
+        { value: 'intel-i7-7700k', label: 'Core i7-7700K' },
+        { value: 'intel-i5-7600k', label: 'Core i5-7600K' },
+        { value: 'intel-i3-7100', label: 'Core i3-7100' },
+        // 6th Gen
+        { value: 'intel-i7-6700k', label: 'Core i7-6700K' },
+        { value: 'intel-i5-6600k', label: 'Core i5-6600K' },
+        // 4th Gen
+        { value: 'intel-i7-4790k', label: 'Core i7-4790K' },
+        { value: 'intel-i5-4690k', label: 'Core i5-4690K' },
+        // 3rd Gen
+        { value: 'intel-i7-3770k', label: 'Core i7-3770K' },
+        { value: 'intel-i5-3570k', label: 'Core i5-3570K' },
+        // 2nd Gen
+        { value: 'intel-i7-2600k', label: 'Core i7-2600K' },
+        { value: 'intel-i5-2500k', label: 'Core i5-2500K' },
+        // 1st Gen
+        { value: 'intel-i7-860', label: 'Core i7-860' },
+        { value: 'intel-i5-750', label: 'Core i5-750' },
       ],
     },
     {
@@ -47,10 +80,24 @@ export const componentsData = {
         { value: 'amd-ryzen-7-5700x', label: 'Ryzen 7 5700X' },
         { value: 'amd-ryzen-5-5600x', label: 'Ryzen 5 5600X' },
         { value: 'amd-ryzen-5-5600', label: 'Ryzen 5 5600' },
+        { value: 'amd-ryzen-3-5300g', label: 'Ryzen 3 5300G' },
         // Ryzen 3000
         { value: 'amd-ryzen-9-3950x', label: 'Ryzen 9 3950X' },
+        { value: 'amd-ryzen-9-3900x', label: 'Ryzen 9 3900X' },
+        { value: 'amd-ryzen-7-3800x', label: 'Ryzen 7 3800X' },
         { value: 'amd-ryzen-7-3700x', label: 'Ryzen 7 3700X' },
+        { value: 'amd-ryzen-5-3600x', label: 'Ryzen 5 3600X' },
         { value: 'amd-ryzen-5-3600', label: 'Ryzen 5 3600' },
+        { value: 'amd-ryzen-3-3300x', label: 'Ryzen 3 3300X' },
+        // Ryzen 2000
+        { value: 'amd-ryzen-7-2700x', label: 'Ryzen 7 2700X' },
+        { value: 'amd-ryzen-5-2600x', label: 'Ryzen 5 2600X' },
+        { value: 'amd-ryzen-3-2200g', label: 'Ryzen 3 2200G' },
+        // Ryzen 1000
+        { value: 'amd-ryzen-7-1800x', label: 'Ryzen 7 1800X' },
+        { value: 'amd-ryzen-7-1700x', label: 'Ryzen 7 1700X' },
+        { value: 'amd-ryzen-5-1600x', label: 'Ryzen 5 1600X' },
+        { value: 'amd-ryzen-3-1300x', label: 'Ryzen 3 1300X' },
       ],
     },
   ],
