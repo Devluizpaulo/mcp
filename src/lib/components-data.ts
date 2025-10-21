@@ -52,6 +52,9 @@ export const componentsData = {
         // 3rd Gen
         { value: 'intel-i7-3770k', label: 'Core i7-3770K' },
         { value: 'intel-i5-3570k', label: 'Core i5-3570K' },
+        { value: 'intel-i5-3550', label: 'Core i5-3550' },
+        { value: 'intel-i5-3470', label: 'Core i5-3470' },
+        { value: 'intel-i5-3330', label: 'Core i5-3330' },
         // 2nd Gen
         { value: 'intel-i7-2600k', label: 'Core i7-2600K' },
         { value: 'intel-i5-2500k', label: 'Core i5-2500K' },
