@@ -19,12 +19,14 @@ import {
   MessageSquare,
   Wrench,
   Cpu,
+  Bookmark,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
   { href: '/', label: 'Upgrade Meu PC', icon: Wrench },
   { href: '/build', label: 'Montar Novo PC', icon: Cpu },
+  { href: '/my-builds', label: 'Minhas Builds', icon: Bookmark },
   { href: '/chat', label: 'Chat com IA', icon: MessageSquare },
 ];
 
