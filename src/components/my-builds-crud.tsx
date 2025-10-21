@@ -40,6 +40,7 @@ import {
   Trash2,
   Loader2,
   Inbox,
+  LogIn,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -62,6 +63,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Link from 'next/link';
 
 interface UserConfiguration {
   id: string;
@@ -182,7 +184,7 @@ export function MyBuildsCrud() {
     error,
   } = useCollection<UserConfiguration>(configurationsCollection);
 
-  if (isUserLoading || isLoadingCollection) {
+  if (isUserLoading || (isLoadingCollection && !configurations)) {
     return (
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -190,15 +192,18 @@ export function MyBuildsCrud() {
       </div>
     );
   }
-
+  
   if (!user) {
-    return (
+    // This case is handled by the page, but as a fallback:
+     return (
       <Alert>
-        <FilePenLine className="h-4 w-4" />
+        <LogIn className="h-4 w-4" />
         <AlertTitle>Login Necessário</AlertTitle>
         <AlertDescription>
-          Você precisa estar logado para ver e gerenciar suas builds. Por favor,
-          faça login. (Funcionalidade de login a ser implementada).
+          <Button asChild variant="link" className="p-0 h-auto">
+            <Link href="/login?redirect=/my-builds">Faça login</Link>
+          </Button>
+          &nbsp;para ver e gerenciar suas builds.
         </AlertDescription>
       </Alert>
     );
@@ -234,12 +239,10 @@ export function MyBuildsCrud() {
     <Dialog open={isFormOpen} onOpenChange={setFormOpen}>
       <div className="space-y-4">
         <div className="flex justify-end">
-          <DialogTrigger asChild>
-            <Button onClick={handleAddNew}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Adicionar Nova Build
-            </Button>
-          </DialogTrigger>
+          <Button onClick={handleAddNew}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Adicionar Nova Build
+          </Button>
         </div>
 
         {error && (
@@ -295,7 +298,7 @@ export function MyBuildsCrud() {
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="text-destructive"
+                            className="text-destructive focus:text-destructive-foreground focus:bg-destructive"
                             onClick={() => handleDelete(config.id)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />

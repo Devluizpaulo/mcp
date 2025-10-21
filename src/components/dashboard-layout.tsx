@@ -21,7 +21,7 @@ import {
   Cpu,
   Bookmark,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { UserNav } from './user-nav';
 
 const menuItems = [
   { href: '/', label: 'Upgrade Meu PC', icon: Wrench },
@@ -61,12 +61,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/90 px-4 backdrop-blur-sm md:hidden">
-          <div className="flex items-center gap-2">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/90 px-4 backdrop-blur-sm md:static">
+          <div className="flex items-center gap-2 md:hidden">
             <AlertTriangle className="h-6 w-6 text-primary" />
             <h1 className="text-lg font-bold font-headline">MCP</h1>
           </div>
-          <SidebarTrigger />
+           <div className="hidden md:block">
+            {/* Espaço reservado no desktop, pode ser usado para breadcrumbs ou título da página */}
+           </div>
+          <div className="flex items-center gap-2">
+            <UserNav />
+            <SidebarTrigger className="md:hidden" />
+          </div>
         </header>
         <main>{children}</main>
       </SidebarInset>
