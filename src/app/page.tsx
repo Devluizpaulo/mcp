@@ -1,8 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, MessageSquare } from 'lucide-react';
 import { UpgradeForm } from '@/components/upgrade-form';
 import { BuildForm } from '@/components/build-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChatInterface } from '@/components/chat-interface';
 
 export default function Home() {
   return (
@@ -25,9 +26,13 @@ export default function Home() {
             </div>
 
             <Tabs defaultValue="upgrade" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+              <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto">
                 <TabsTrigger value="upgrade">Upgrade Meu PC</TabsTrigger>
                 <TabsTrigger value="build">Montar Novo PC</TabsTrigger>
+                <TabsTrigger value="chat">
+                    <MessageSquare className="w-4 h-4 mr-2"/>
+                    Chat com IA
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="upgrade">
                 <Card className="border-primary/20">
@@ -52,6 +57,19 @@ export default function Home() {
                   </CardHeader>
                   <CardContent>
                     <BuildForm />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+               <TabsContent value="chat">
+                <Card className="border-primary/20">
+                  <CardHeader>
+                    <CardTitle>Chat com o MCP</CardTitle>
+                    <CardDescription>
+                      Converse com nosso especialista em hardware para tirar dúvidas e receber conselhos.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChatInterface />
                   </CardContent>
                 </Card>
               </TabsContent>

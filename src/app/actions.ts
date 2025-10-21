@@ -3,11 +3,13 @@
 
 import { z } from 'zod';
 import { suggestUpgradesBasedOnExistingComponents } from '@/ai/flows/suggest-upgrades-based-on-existing-components';
-import type { SuggestUpgradesBasedOnExistingComponentsOutput } from '@/ai/flows/suggest-upgrades-based-on-existing-components';
+import type { SuggestUpgradesBasedOnExistingComponentsOutput } from '@/ai/flows/suggest--based-on-existing-components';
 import { generateOptimizedBuildFromBudget } from '@/ai/flows/generate-optimized-build-from-budget';
 import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized-build-from-budget';
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
 import { componentsData } from '@/lib/components-data';
+import { chat as chatFlow } from '@/ai/flows/chat';
+import type { ChatInput } from '@/ai/flows/chat';
 
 export interface UpgradeState {
   form: {
@@ -27,6 +29,11 @@ export interface BuildState {
   status: 'idle' | 'loading' | 'success' | 'error';
   message: string;
   build?: GenerateOptimizedBuildOutput;
+}
+
+export interface ChatMessage {
+    role: 'user' | 'model';
+    content: string;
 }
 
 const findLabel = (category: keyof typeof componentsData, value: string) => {
@@ -175,4 +182,19 @@ export async function getComponentDetails(componentName: string, category: keyof
     console.error(error);
     return { error: 'Falha ao buscar detalhes do componente.' };
   }
+}
+
+export async function getChatResponse(messages: ChatMessage[]) {
+    if (!messages || messages.length === 0) {
+        return { error: 'Nenhuma mensagem fornecida.' };
+    }
+
+    try {
+        const input: ChatInput = { history: messages };
+        const result = await chatFlow(input);
+        return { response: result.response };
+    } catch (error) {
+        console.error(error);
+        return { error: 'Falha ao obter resposta do chat.' };
+    }
 }
