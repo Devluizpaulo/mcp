@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { suggestUpgradesBasedOnExistingComponents } from '@/ai/flows/suggest-upgrades-based-on-existing-components';
 import { generateOptimizedBuildFromBudget } from '@/ai/flows/generate-optimized-build-from-budget';
 import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized-build-from-budget';
+import { componentsData } from '@/lib/components-data';
 
 export interface UpgradeState {
   form: {
@@ -26,12 +27,20 @@ export interface BuildState {
   build?: GenerateOptimizedBuildOutput;
 }
 
+const findLabel = (category: keyof typeof componentsData, value: string) => {
+    const items = componentsData[category];
+    const item = items.find(i => i.value.toLowerCase() === value.toLowerCase());
+    return item ? item.label : value;
+};
+
 const upgradeSchema = z.object({
-  cpu: z.string().min(3, 'Por favor, insira seu processador (CPU).'),
-  gpu: z.string().min(3, 'Por favor, insira sua placa de vídeo (GPU).'),
-  motherboard: z.string().min(3, 'Por favor, insira sua placa-mãe.'),
-  ram: z.string().min(3, 'Por favor, insira sua memória RAM.'),
-  storage: z.string().min(3, 'Por favor, insira seu armazenamento.'),
+  cpu: z.string().min(1, 'Por favor, selecione seu processador (CPU).'),
+  gpu: z.string().min(1, 'Por favor, selecione sua placa de vídeo (GPU).'),
+  motherboard: z.string().min(1, 'Por favor, selecione sua placa-mãe.'),
+  ram: z.string().min(1, 'Por favor, selecione sua memória RAM.'),
+  storage: z.string().min(1, 'Por favor, selecione seu armazenamento.'),
+  psu: z.string().min(1, 'Por favor, selecione sua fonte de alimentação (PSU).'),
+  case: z.string().min(1, 'Por favor, selecione seu gabinete.'),
 });
 
 const buildSchema = z.object({
@@ -51,6 +60,8 @@ export async function getUpgradeSuggestions(
     motherboard: formData.get('motherboard') as string,
     ram: formData.get('ram') as string,
     storage: formData.get('storage') as string,
+    psu: formData.get('psu') as string,
+    case: formData.get('case') as string,
   };
   
   const jsonComponents = JSON.stringify(components);
@@ -68,7 +79,10 @@ export async function getUpgradeSuggestions(
   }
   
   const existingComponentsString = Object.entries(validatedFields.data)
-      .map(([key, value]) => `${key.toUpperCase()}: ${value}`)
+      .map(([key, value]) => {
+          const label = findLabel(key as keyof typeof componentsData, value);
+          return `${key.toUpperCase()}: ${label}`;
+      })
       .join(', ');
 
   try {
