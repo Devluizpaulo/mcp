@@ -36,18 +36,17 @@ const prompt = ai.definePrompt({
   name: 'getComponentDetailsPrompt',
   input: {schema: GetComponentDetailsInputSchema},
   output: {schema: GetComponentDetailsOutputSchema},
-  prompt: `You are a PC hardware expert. Provide a detailed analysis for the following component: {{{componentName}}}.
+  prompt: `You are a PC hardware expert and a great teacher. Provide a detailed and educational analysis for the following component: {{{componentName}}}.
 
-  Structure your response clearly with the following sections:
+  Structure your response clearly with the following sections, using Markdown for formatting:
   - **Component:** The full name of the component.
+  - **Analogia para Iniciantes:** Explain the component's role in a simple, relatable way. For example, 'If the PC is an office, the CPU is the main employee doing all the work'.
   - **Key Characteristics:** Bullet points on the main technical specifications (e.g., core count, clock speed, memory size, VRAM, speed, etc.).
   - **Pros:** Bullet points on the advantages of this component (e.g., performance in gaming, value for money, specific features).
   - **Cons:** Bullet points on the disadvantages (e.g., high power consumption, price, older technology).
   - **Estimated Price (USD):** A typical price range in USD (e.g., $250 - $300).
   - **Estimated Power Consumption (TDP):** The estimated power draw in watts (e.g., 125W).
-  - **Compatibility Notes:** Brief notes on what this component is compatible with (e.g., 'Requires an AM5 socket motherboard', 'Best paired with a 750W PSU or higher').
-  
-  Use Markdown for formatting.`,
+  - **Compatibility Notes:** Brief notes on what this component is compatible with (e.g., 'Requires an AM5 socket motherboard', 'Best paired with a 750W PSU or higher').`,
 });
 
 const getComponentDetailsFlow = ai.defineFlow(

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { CircuitBoard, Cpu, HardDrive, Keyboard, MemoryStick, Monitor, Mouse, Puzzle, Power, Fan, PcCase, CheckCircle, XCircle, Star, DollarSign, Zap } from 'lucide-react';
+import { CircuitBoard, Cpu, HardDrive, Keyboard, MemoryStick, Monitor, Mouse, Puzzle, Power, Fan, PcCase, CheckCircle, XCircle, Star, DollarSign, Zap, BookOpen } from 'lucide-react';
 import React from 'react';
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -36,12 +36,13 @@ const iconMap: { [key: string]: React.ElementType } = {
   price: DollarSign,
   consumo: Zap,
   power: Zap,
+  analogia: BookOpen,
 };
 
 const findIcon = (text: string): React.ElementType | null => {
     const lowerText = text.toLowerCase();
     // Check for exact matches first for higher priority keys
-    const exactMatch = Object.keys(iconMap).find(key => lowerText === key);
+    const exactMatch = Object.keys(iconMap).find(key => lowerText.startsWith(key));
     if (exactMatch) return iconMap[exactMatch];
 
     // Then check for includes
