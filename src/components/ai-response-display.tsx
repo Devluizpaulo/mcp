@@ -1,7 +1,7 @@
 
 'use client';
 
-import { CircuitBoard, Cpu, HardDrive, Keyboard, MemoryStick, Monitor, Mouse, Puzzle } from 'lucide-react';
+import { CircuitBoard, Cpu, HardDrive, Keyboard, MemoryStick, Monitor, Mouse, Puzzle, Power, Fan, PcCase, CheckCircle, XCircle, Star, DollarSign, Zap } from 'lucide-react';
 import React from 'react';
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -11,23 +11,40 @@ const iconMap: { [key: string]: React.ElementType } = {
   'placa de vídeo': Puzzle,
   ram: MemoryStick,
   memória: MemoryStick,
-  'placa-mãe': CircuitBoard,
   motherboard: CircuitBoard,
+  'placa-mãe': CircuitBoard,
   armazenamento: HardDrive,
   storage: HardDrive,
   ssd: HardDrive,
   hd: HardDrive,
-  fonte: Puzzle,
-  psu: Puzzle,
-  gabinete: Puzzle,
-  case: Puzzle,
+  psu: Power,
+  fonte: Power,
+  cooler: Fan,
+  gabinete: PcCase,
+  case: PcCase,
   monitor: Monitor,
   teclado: Keyboard,
   mouse: Mouse,
+  compatibilidade: CheckCircle,
+  compatibility: CheckCircle,
+  pros: CheckCircle,
+  cons: XCircle,
+  contras: XCircle,
+  características: Star,
+  features: Star,
+  preço: DollarSign,
+  price: DollarSign,
+  consumo: Zap,
+  power: Zap,
 };
 
 const findIcon = (text: string): React.ElementType | null => {
     const lowerText = text.toLowerCase();
+    // Check for exact matches first for higher priority keys
+    const exactMatch = Object.keys(iconMap).find(key => lowerText === key);
+    if (exactMatch) return iconMap[exactMatch];
+
+    // Then check for includes
     for (const key in iconMap) {
         if (lowerText.includes(key)) {
             return iconMap[key];
@@ -40,7 +57,7 @@ export function AiResponseDisplay({ content }: { content: string }) {
     const lines = content.split('\n').filter(line => line.trim() !== '');
 
     return (
-        <div className="space-y-2 text-sm leading-relaxed">
+        <div className="space-y-3 text-sm leading-relaxed">
             {lines.map((line, index) => {
                 const trimmedLine = line.trim();
 
@@ -48,7 +65,7 @@ export function AiResponseDisplay({ content }: { content: string }) {
                     const title = trimmedLine.replace(/\*|#/g, '').trim();
                     const Icon = findIcon(title);
                     return (
-                        <h3 key={index} className="text-lg font-semibold mt-6 mb-2 flex items-center gap-2 font-headline text-primary/90">
+                        <h3 key={index} className="text-lg font-semibold mt-6 mb-3 flex items-center gap-2 font-headline text-primary/90 border-b border-primary/20 pb-2">
                             {Icon && <Icon className="w-5 h-5 text-primary" />}
                             {title}
                         </h3>
@@ -57,10 +74,10 @@ export function AiResponseDisplay({ content }: { content: string }) {
 
                 if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
                     return (
-                        <p key={index} className="ml-4 flex items-start gap-2">
-                           <span className="text-accent mt-1.5">•</span>
+                        <div key={index} className="flex items-start gap-3">
+                           <span className="text-accent mt-1">&#x25CF;</span>
                            <span className="flex-1">{trimmedLine.substring(2)}</span>
-                        </p>
+                        </div>
                     );
                 }
 
