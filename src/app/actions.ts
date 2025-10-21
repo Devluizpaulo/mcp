@@ -29,12 +29,13 @@ export interface BuildState {
 
 const findLabel = (category: keyof typeof componentsData, value: string) => {
     const items = componentsData[category];
-    const item = items.find(i => i.value.toLowerCase() === value.toLowerCase());
+    const item = items.flatMap(group => group.items).find(i => i.value.toLowerCase() === value.toLowerCase());
     return item ? item.label : value;
 };
 
 const upgradeSchema = z.object({
   cpu: z.string().min(1, 'Por favor, selecione seu processador (CPU).'),
+  cooler: z.string().min(1, 'Por favor, selecione seu cooler.'),
   gpu: z.string().min(1, 'Por favor, selecione sua placa de vídeo (GPU).'),
   motherboard: z.string().min(1, 'Por favor, selecione sua placa-mãe.'),
   ram: z.string().min(1, 'Por favor, selecione sua memória RAM.'),
@@ -56,6 +57,7 @@ export async function getUpgradeSuggestions(
   
   const components = {
     cpu: formData.get('cpu') as string,
+    cooler: formData.get('cooler') as string,
     gpu: formData.get('gpu') as string,
     motherboard: formData.get('motherboard') as string,
     ram: formData.get('ram') as string,
@@ -80,9 +82,11 @@ export async function getUpgradeSuggestions(
   
   const existingComponentsString = Object.entries(validatedFields.data)
       .map(([key, value]) => {
+          if (!value) return null;
           const label = findLabel(key as keyof typeof componentsData, value);
           return `${key.toUpperCase()}: ${label}`;
       })
+      .filter(Boolean)
       .join(', ');
 
   try {

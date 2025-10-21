@@ -7,7 +7,7 @@ import { getUpgradeSuggestions, type UpgradeState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from '@/components/submit-button';
 import { AiResponseDisplay } from './ai-response-display';
-import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power } from 'lucide-react';
+import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power, Fan } from 'lucide-react';
 import { Combobox } from './combobox';
 import { componentsData } from '@/lib/components-data';
 
@@ -30,6 +30,7 @@ export function UpgradeForm() {
   const [storage, setStorage] = useState('');
   const [psu, setPsu] = useState('');
   const [caseComponent, setCaseComponent] = useState('');
+  const [cooler, setCooler] = useState('');
 
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export function UpgradeForm() {
         setStorage(initial.storage || '');
         setPsu(initial.psu || '');
         setCaseComponent(initial.case || '');
+        setCooler(initial.cooler || '');
       } catch (e) {
         setCpu('');
         setGpu('');
@@ -58,6 +60,7 @@ export function UpgradeForm() {
         setStorage('');
         setPsu('');
         setCaseComponent('');
+        setCooler('');
       }
     }
   }, [state]);
@@ -78,6 +81,21 @@ export function UpgradeForm() {
             placeholder="Selecione uma CPU"
             searchPlaceholder="Procurar CPU..."
             emptyPlaceholder="Nenhuma CPU encontrada."
+          />
+        </div>
+        <div className="grid w-full items-center gap-2">
+          <Label htmlFor="cooler" className="flex items-center gap-2">
+            <Fan className="h-5 w-5 text-muted-foreground" />
+            Cooler do Processador
+          </Label>
+          <Combobox
+            name="cooler"
+            items={componentsData.cooler}
+            value={cooler}
+            onChange={setCooler}
+            placeholder="Selecione um Cooler"
+            searchPlaceholder="Procurar Cooler..."
+            emptyPlaceholder="Nenhum Cooler encontrado."
           />
         </div>
         <div className="grid w-full items-center gap-2">
@@ -155,7 +173,7 @@ export function UpgradeForm() {
             emptyPlaceholder="Nenhuma Fonte encontrada."
           />
         </div>
-        <div className="grid w-full items-center gap-2 md:col-span-2">
+        <div className="grid w-full items-center gap-2">
           <Label htmlFor="case" className="flex items-center gap-2">
             <PcCase className="h-5 w-5 text-muted-foreground" />
             Gabinete

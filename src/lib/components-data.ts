@@ -139,6 +139,8 @@ export const componentsData = {
         { value: 'gskill-ddr5-6000-32gb', label: 'G.Skill Trident Z5 RGB 32GB (2x16GB) 6000MHz CL30' },
         { value: 'kingston-fury-ddr5-5200-32gb', label: 'Kingston FURY Beast 32GB (2x16GB) 5200MHz' },
         { value: 'crucial-pro-ddr5-5600-32gb', label: 'Crucial Pro 32GB (2x16GB) 5600MHz' },
+        { value: 'xpg-lancer-ddr5-6000-32gb', label: 'XPG Lancer RGB 32GB (2x16GB) 6000MHz' },
+        { value: 'teamgroup-tforce-delta-ddr5-7200-32gb', label: 'Teamgroup T-Force Delta RGB 32GB (2x16GB) 7200MHz' },
     ]},
     { 
       label: 'DDR4', 
@@ -147,6 +149,7 @@ export const componentsData = {
         { value: 'gskill-ddr4-3600-16gb', label: 'G.Skill Ripjaws V 16GB (2x8GB) 3600MHz CL18' },
         { value: 'kingston-fury-ddr4-3200-16gb', label: 'Kingston FURY Beast 16GB (2x8GB) 3200MHz' },
         { value: 'crucial-ballistix-ddr4-3200-16gb', label: 'Crucial Ballistix 16GB (2x8GB) 3200MHz' },
+        { value: 'teamgroup-tforce-vulcan-z-ddr4-3200-16gb', label: 'Teamgroup T-Force Vulcan Z 16GB (2x8GB) 3200MHz' },
     ]},
   ],
   storage: [
@@ -190,6 +193,13 @@ export const componentsData = {
         { value: 'be-quiet-dark-power-pro-12-1200w', label: 'Dark Power Pro 12 1200W 80+ Titanium' },
         { value: 'be-quiet-straight-power-11-750w', label: 'Straight Power 11 750W 80+ Platinum' }
       ]},
+       { label: 'Cooler Master', items: [
+        { value: 'cooler-master-v850-sfx', label: 'V850 SFX Gold 850W' },
+        { value: 'cooler-master-mwe-gold-750-v2', label: 'MWE Gold 750 V2 750W' },
+      ]},
+       { label: 'NZXT', items: [
+        { value: 'nzxt-c850', label: 'C850 850W 80+ Gold' },
+      ]},
   ],
   case: [
       { label: 'Fractal Design', items: [
@@ -200,15 +210,43 @@ export const componentsData = {
       { label: 'Lian Li', items: [
         { value: 'lian-li-pc-o11-dynamic-evo', label: 'PC-O11 Dynamic EVO' },
         { value: 'lian-li-lancool-iii', label: 'Lancool III' },
+        { value: 'lian-li-lancool-216', label: 'Lancool 216' },
       ]},
       { label: 'NZXT', items: [
         { value: 'nzxt-h9-flow', label: 'H9 Flow' },
         { value: 'nzxt-h7-flow', label: 'H7 Flow' },
-        { value: 'nzxt-h510-flow', label: 'H510 Flow' },
+        { value: 'nzxt-h5-flow', label: 'H5 Flow' },
       ]},
       { label: 'Cooler Master', items: [
         { value: 'cooler-master-masterbox-td500-mesh', label: 'MasterBox TD500 Mesh' },
         { value: 'cooler-master-masterbox-q300l', label: 'MasterBox Q300L' },
       ]},
-  ]
+      { label: 'Corsair', items: [
+        { value: 'corsair-4000d-airflow', label: '4000D Airflow' },
+        { value: 'corsair-5000d-airflow', label: '5000D Airflow' },
+      ]},
+      { label: 'be quiet!', items: [
+        { value: 'be-quiet-pure-base-500dx', label: 'Pure Base 500DX' },
+      ]},
+  ],
+  cooler: [
+    {
+      label: 'Air Cooler',
+      items: [
+        { value: 'noctua-nh-d15', label: 'Noctua NH-D15' },
+        { value: 'be-quiet-dark-rock-pro-4', label: 'be quiet! Dark Rock Pro 4' },
+        { value: 'cooler-master-hyper-212-evo', label: 'Cooler Master Hyper 212 EVO' },
+        { value: 'scythe-fuma-2', label: 'Scythe Fuma 2' },
+      ],
+    },
+    {
+      label: 'Liquid Cooler (AIO)',
+      items: [
+        { value: 'nzxt-kraken-x73', label: 'NZXT Kraken X73' },
+        { value: 'corsair-h150i-elite-capellix', label: 'Corsair iCUE H150i ELITE CAPELLIX' },
+        { value: 'lian-li-galahad-360', label: 'Lian Li Galahad 360' },
+        { value: 'arctic-liquid-freezer-ii-280', label: 'ARCTIC Liquid Freezer II 280' },
+      ],
+    },
+  ],
 };
