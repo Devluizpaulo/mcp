@@ -96,28 +96,32 @@ export function Combobox({
             className="w-full justify-between"
           >
             {value
-              ? allItems.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label
+              ? allItems.find((item) => item.value.toLowerCase() === value.toLowerCase())?.label || value
               : placeholder}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-          <Command>
-            <CommandInput placeholder={searchPlaceholder} />
+          <Command shouldFilter={false}>
+            <CommandInput 
+              placeholder={searchPlaceholder}
+              value={value}
+              onValueChange={onChange}
+            />
             <CommandList>
               <CommandEmpty>{emptyPlaceholder}</CommandEmpty>
               {isGrouped(data) ? (
                 data.map((group, index) => (
                   <React.Fragment key={group.label}>
                     <CommandGroup heading={group.label}>
-                      {renderItems(group.items)}
+                      {renderItems(group.items.filter(item => item.label.toLowerCase().includes(value.toLowerCase())))}
                     </CommandGroup>
                     {index < data.length - 1 && <CommandSeparator />}
                   </React.Fragment>
                 ))
               ) : (
                 <CommandGroup>
-                  {renderItems(data)}
+                  {renderItems(data.filter((item: any) => item.label.toLowerCase().includes(value.toLowerCase())))}
                 </CommandGroup>
               )}
             </CommandList>

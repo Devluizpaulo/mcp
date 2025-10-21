@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -28,6 +29,7 @@ export interface BuildState {
 }
 
 const findLabel = (category: keyof typeof componentsData, value: string) => {
+    if (!value) return value;
     const items = componentsData[category];
     const item = items.flatMap(group => group.items).find(i => i.value.toLowerCase() === value.toLowerCase());
     return item ? item.label : value;
