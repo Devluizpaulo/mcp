@@ -1,3 +1,4 @@
+
 export const componentsData = {
   cpu: [
     {
@@ -273,6 +274,15 @@ export const componentsData = {
         { value: 'asus-rog-strix-z590-e', label: 'ASUS ROG Strix Z590-E Gaming' },
         { value: 'gigabyte-z490-aorus-ultra', label: 'Gigabyte Z490 Aorus Ultra' },
         { value: 'msi-mag-b460m-mortar', label: 'MSI MAG B460M Mortar WiFi' },
+      ]
+    },
+    {
+      label: 'Socket LGA1155 (Intel 2nd/3rd Gen)',
+      items: [
+        { value: 'intel-dq77mk', label: 'Intel DQ77MK' },
+        { value: 'asus-p8z77-v-pro', label: 'ASUS P8Z77-V Pro' },
+        { value: 'gigabyte-ga-z77x-ud5h', label: 'Gigabyte GA-Z77X-UD5H' },
+        { value: 'asrock-z77-extreme4', label: 'ASRock Z77 Extreme4' },
       ]
     },
   ],
