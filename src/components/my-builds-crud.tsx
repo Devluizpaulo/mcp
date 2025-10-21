@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -32,6 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   PlusCircle,
@@ -41,6 +43,7 @@ import {
   Loader2,
   Inbox,
   LogIn,
+  Info,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -64,11 +67,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Link from 'next/link';
+import { AiResponseDisplay } from './ai-response-display';
 
 interface UserConfiguration {
   id: string;
   name: string;
   description: string;
+  generatedConfiguration?: string;
   createdAt: {
     seconds: number;
     nanoseconds: number;
@@ -166,6 +171,31 @@ function BuildForm({
   );
 }
 
+function ViewBuildDialog({ config }: { config: UserConfiguration }) {
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8">
+                    <Info className="mr-2 h-4 w-4" /> Ver Detalhes
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[625px]">
+                <DialogHeader>
+                    <DialogTitle>{config.name}</DialogTitle>
+                    <DialogDescription>{config.description}</DialogDescription>
+                </DialogHeader>
+                <div className="py-4 max-h-[60vh] overflow-y-auto">
+                    {config.generatedConfiguration ? (
+                        <AiResponseDisplay content={config.generatedConfiguration} />
+                    ) : (
+                        <p className="text-muted-foreground text-center">Nenhuma configuração detalhada foi salva para esta build.</p>
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
 export function MyBuildsCrud() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -236,7 +266,7 @@ export function MyBuildsCrud() {
   }
 
   return (
-    <Dialog open={isFormOpen} onOpenChange={setFormOpen}>
+    <Dialog open={isFormOpen} onOpenChange={(isOpen) => { if (!isOpen) onFormFinished() }}>
       <div className="space-y-4">
         <div className="flex justify-end">
           <Button onClick={handleAddNew}>
@@ -264,11 +294,9 @@ export function MyBuildsCrud() {
                   Descrição
                 </TableHead>
                 <TableHead className="hidden sm:table-cell">
-                  Última Atualização
+                  Atualizado em
                 </TableHead>
-                <TableHead>
-                  <span className="sr-only">Ações</span>
-                </TableHead>
+                <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -284,7 +312,8 @@ export function MyBuildsCrud() {
                         config.updatedAt.seconds * 1000
                       ).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex items-center gap-2">
+                      <ViewBuildDialog config={config} />
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button aria-haspopup="true" size="icon" variant="ghost">
@@ -315,7 +344,7 @@ export function MyBuildsCrud() {
                     <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <Inbox className="h-10 w-10" />
                         <span>Nenhuma build encontrada.</span>
-                        <span className="text-xs">Comece adicionando uma nova configuração.</span>
+                        <span className="text-xs">Comece salvando uma nova configuração.</span>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -329,6 +358,9 @@ export function MyBuildsCrud() {
           <DialogTitle>
             {editingConfig ? 'Editar Build' : 'Adicionar Nova Build'}
           </DialogTitle>
+           <DialogDescription>
+            {editingConfig ? 'Atualize os detalhes da sua build.' : 'Adicione uma build manualmente para seu registro.'}
+          </DialogDescription>
         </DialogHeader>
         <BuildForm configuration={editingConfig} onFinished={onFormFinished} />
       </DialogContent>

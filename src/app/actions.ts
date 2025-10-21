@@ -10,6 +10,12 @@ import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-c
 import { componentsData } from '@/lib/components-data';
 import { chat as chatFlow } from '@/ai/flows/chat';
 import type { ChatInput } from '@/ai/flows/chat';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { initializeFirebase } from '@/firebase';
+
 
 export interface UpgradeState {
   form: {
@@ -58,6 +64,15 @@ const buildSchema = z.object({
   budget: z.coerce.number().min(100, 'O orçamento deve ser de pelo menos 100 USD.'),
   intendedUse: z.string().min(1, 'Por favor, selecione o uso pretendido.'),
   existingComponents: z.string().optional(),
+});
+
+const saveBuildSchema = z.object({
+  name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres.'),
+  description: z.string().optional(),
+  buildConfiguration: z.string(),
+  totalCost: z.coerce.number(),
+  performanceScore: z.coerce.number(),
+  userId: z.string(),
 });
 
 export async function getUpgradeSuggestions(
@@ -165,6 +180,45 @@ export async function getNewBuild(
       message: 'Ocorreu um erro ao gerar a configuração. Por favor, tente novamente.',
       form: { budget, intendedUse, existingComponents },
     };
+  }
+}
+
+export async function saveNewBuild(formData: FormData) {
+  'use server';
+
+  const validatedFields = saveBuildSchema.safeParse({
+    name: formData.get('name'),
+    description: formData.get('description'),
+    buildConfiguration: formData.get('buildConfiguration'),
+    totalCost: formData.get('totalCost'),
+    performanceScore: formData.get('performanceScore'),
+    userId: formData.get('userId'),
+  });
+
+  if (!validatedFields.success) {
+    return { error: 'Dados inválidos para salvar a build.' };
+  }
+  
+  const { firestore } = initializeFirebase();
+  const { name, description, buildConfiguration, totalCost, performanceScore, userId } = validatedFields.data;
+
+  try {
+    const collectionRef = collection(firestore, `users/${userId}/configurations`);
+    await addDocumentNonBlocking(collectionRef, {
+      name,
+      description: description || 'Build gerada pela IA.',
+      generatedConfiguration: buildConfiguration,
+      totalEstimatedCost: totalCost,
+      performanceScore: performanceScore,
+      componentIds: [],
+      peripheralIds: [],
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    return { success: 'Build salva com sucesso!' };
+  } catch (e) {
+    console.error(e);
+    return { error: 'Falha ao salvar a build no banco de dados.' };
   }
 }
 
