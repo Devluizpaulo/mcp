@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -24,6 +25,12 @@ const SuggestUpgradesBasedOnExistingComponentsOutputSchema = z.object({
     .describe(
       'A list of suggested hardware upgrades, considering compatibility and price, and explained in detail.'
     ),
+  upgradeCost: z
+    .number()
+    .describe('The total estimated cost of the suggested upgrade components in USD.'),
+  currentValue: z
+    .number()
+    .describe('The estimated current market value of the user\'s existing PC build in USD.'),
 });
 
 export type SuggestUpgradesBasedOnExistingComponentsOutput =
@@ -39,7 +46,13 @@ const prompt = ai.definePrompt({
   name: 'suggestUpgradesBasedOnExistingComponentsPrompt',
   input: {schema: SuggestUpgradesBasedOnExistingComponentsInputSchema},
   output: {schema: SuggestUpgradesBasedOnExistingComponentsOutputSchema},
-  prompt: `Given the user's existing computer components: {{{existingComponents}}}, suggest specific hardware upgrades that will improve overall system performance, taking into account component compatibility and price. Explain why each upgrade is recommended, and provide estimated costs if possible. Be as detailed as possible.`,
+  prompt: `Given the user's existing computer components: {{{existingComponents}}}, suggest specific hardware upgrades that will improve overall system performance, taking into account component compatibility and price.
+
+  Your response must include three fields:
+  1. 'suggestedUpgrades': A detailed explanation of why each upgrade is recommended. Be as detailed as possible.
+  2. 'upgradeCost': The total estimated cost in USD for purchasing all the suggested upgrade components.
+  3. 'currentValue': The estimated current market value in USD of the user's existing PC build (before the upgrade).
+  `,
 });
 
 const suggestUpgradesBasedOnExistingComponentsFlow = ai.defineFlow(

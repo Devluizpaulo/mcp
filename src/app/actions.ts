@@ -3,6 +3,7 @@
 
 import { z } from 'zod';
 import { suggestUpgradesBasedOnExistingComponents } from '@/ai/flows/suggest-upgrades-based-on-existing-components';
+import type { SuggestUpgradesBasedOnExistingComponentsOutput } from '@/ai/flows/suggest-upgrades-based-on-existing-components';
 import { generateOptimizedBuildFromBudget } from '@/ai/flows/generate-optimized-build-from-budget';
 import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized-build-from-budget';
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
@@ -14,7 +15,7 @@ export interface UpgradeState {
   };
   status: 'idle' | 'loading' | 'success' | 'error';
   message: string;
-  suggestions?: string;
+  result?: SuggestUpgradesBasedOnExistingComponentsOutput;
 }
 
 export interface BuildState {
@@ -99,7 +100,7 @@ export async function getUpgradeSuggestions(
       ...prevState,
       status: 'success',
       message: 'Sugestões geradas com sucesso!',
-      suggestions: result.suggestedUpgrades,
+      result: result,
       form: { existingComponents: jsonComponents },
     };
   } catch (error) {

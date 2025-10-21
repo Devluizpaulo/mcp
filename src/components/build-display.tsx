@@ -21,7 +21,7 @@ export function BuildDisplay({ build }: BuildDisplayProps) {
       <CardContent>
         <div className="grid sm:grid-cols-2 gap-6 mb-6">
           <div className="flex flex-col justify-center rounded-lg bg-card-foreground/5 p-4">
-            <p className="text-sm text-muted-foreground">Custo Total Estimado</p>
+            <p className="text-sm text-muted-foreground">Valor Estimado do Build</p>
             <p className="text-3xl font-bold text-primary">
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
