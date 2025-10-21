@@ -1,10 +1,10 @@
-
 'use server';
 
 import { z } from 'zod';
 import { suggestUpgradesBasedOnExistingComponents } from '@/ai/flows/suggest-upgrades-based-on-existing-components';
 import { generateOptimizedBuildFromBudget } from '@/ai/flows/generate-optimized-build-from-budget';
 import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized-build-from-budget';
+import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
 import { componentsData } from '@/lib/components-data';
 
 export interface UpgradeState {
@@ -155,5 +155,21 @@ export async function getNewBuild(
       message: 'Ocorreu um erro ao gerar a configuração. Por favor, tente novamente.',
       form: { budget, intendedUse, existingComponents },
     };
+  }
+}
+
+export async function getComponentDetails(componentName: string, category: keyof typeof componentsData) {
+  if (!componentName) {
+    return { error: 'Nome do componente não fornecido.' };
+  }
+  
+  const label = findLabel(category, componentName);
+
+  try {
+    const result = await getComponentDetailsFlow({ componentName: label });
+    return { details: result.details };
+  } catch (error) {
+    console.error(error);
+    return { error: 'Falha ao buscar detalhes do componente.' };
   }
 }

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
@@ -10,6 +9,7 @@ import { AiResponseDisplay } from './ai-response-display';
 import { Cpu, CircuitBoard, MemoryStick, Puzzle, HardDrive, PcCase, Power, Fan } from 'lucide-react';
 import { Combobox } from './combobox';
 import { componentsData } from '@/lib/components-data';
+import { ComponentDetailsDialog } from './component-details-dialog';
 
 const initialState: UpgradeState = {
   form: {
@@ -18,6 +18,14 @@ const initialState: UpgradeState = {
   status: 'idle',
   message: '',
 };
+
+const findLabel = (category: keyof typeof componentsData, value: string) => {
+    if (!value) return '';
+    const items = componentsData[category];
+    const item = items.flatMap(group => group.items).find(i => i.value.toLowerCase() === value.toLowerCase());
+    return item ? item.label : value;
+};
+
 
 export function UpgradeForm() {
   const [state, formAction] = useActionState(getUpgradeSuggestions, initialState);
@@ -65,129 +73,52 @@ export function UpgradeForm() {
     }
   }, [state]);
 
+  const renderComboboxWithDetails = (
+    category: keyof typeof componentsData,
+    icon: React.ElementType,
+    label: string,
+    value: string,
+    onChange: (value: string) => void
+  ) => {
+    const Icon = icon;
+    return (
+      <div className="grid w-full items-center gap-2">
+        <Label htmlFor={category} className="flex items-center gap-2">
+          <Icon className="h-5 w-5 text-muted-foreground" />
+          {label}
+        </Label>
+        <div className="flex items-center gap-2">
+          <Combobox
+            name={category}
+            items={componentsData[category]}
+            value={value}
+            onChange={onChange}
+            placeholder={`Selecione um(a) ${label}`}
+            searchPlaceholder={`Procurar ${label}...`}
+            emptyPlaceholder={`Nenhum(a) ${label} encontrado(a).`}
+          />
+          <ComponentDetailsDialog
+            componentValue={value}
+            componentLabel={findLabel(category, value)}
+            category={category}
+            disabled={!value}
+          />
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <form action={formAction} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="cpu" className="flex items-center gap-2">
-            <Cpu className="h-5 w-5 text-muted-foreground" />
-            Processador (CPU)
-          </Label>
-          <Combobox
-            name="cpu"
-            items={componentsData.cpu}
-            value={cpu}
-            onChange={setCpu}
-            placeholder="Selecione uma CPU"
-            searchPlaceholder="Procurar CPU..."
-            emptyPlaceholder="Nenhuma CPU encontrada."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="cooler" className="flex items-center gap-2">
-            <Fan className="h-5 w-5 text-muted-foreground" />
-            Cooler do Processador
-          </Label>
-          <Combobox
-            name="cooler"
-            items={componentsData.cooler}
-            value={cooler}
-            onChange={setCooler}
-            placeholder="Selecione um Cooler"
-            searchPlaceholder="Procurar Cooler..."
-            emptyPlaceholder="Nenhum Cooler encontrado."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="gpu" className="flex items-center gap-2">
-            <Puzzle className="h-5 w-5 text-muted-foreground" />
-            Placa de Vídeo (GPU)
-          </Label>
-          <Combobox
-            name="gpu"
-            items={componentsData.gpu}
-            value={gpu}
-            onChange={setGpu}
-            placeholder="Selecione uma GPU"
-            searchPlaceholder="Procurar GPU..."
-            emptyPlaceholder="Nenhuma GPU encontrada."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="motherboard" className="flex items-center gap-2">
-            <CircuitBoard className="h-5 w-5 text-muted-foreground" />
-            Placa-mãe
-          </Label>
-          <Combobox
-            name="motherboard"
-            items={componentsData.motherboard}
-            value={motherboard}
-            onChange={setMotherboard}
-            placeholder="Selecione uma Placa-mãe"
-            searchPlaceholder="Procurar Placa-mãe..."
-            emptyPlaceholder="Nenhuma Placa-mãe encontrada."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="ram" className="flex items-center gap-2">
-            <MemoryStick className="h-5 w-5 text-muted-foreground" />
-            Memória RAM
-          </Label>
-          <Combobox
-            name="ram"
-            items={componentsData.ram}
-            value={ram}
-            onChange={setRam}
-            placeholder="Selecione uma RAM"
-            searchPlaceholder="Procurar RAM..."
-            emptyPlaceholder="Nenhuma RAM encontrada."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="storage" className="flex items-center gap-2">
-            <HardDrive className="h-5 w-5 text-muted-foreground" />
-            Armazenamento (SSD/HD)
-          </Label>
-          <Combobox
-            name="storage"
-            items={componentsData.storage}
-            value={storage}
-            onChange={setStorage}
-            placeholder="Selecione um Armazenamento"
-            searchPlaceholder="Procurar Armazenamento..."
-            emptyPlaceholder="Nenhum Armazenamento encontrado."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="psu" className="flex items-center gap-2">
-            <Power className="h-5 w-5 text-muted-foreground" />
-            Fonte (PSU)
-          </Label>
-           <Combobox
-            name="psu"
-            items={componentsData.psu}
-            value={psu}
-            onChange={setPsu}
-            placeholder="Selecione uma Fonte"
-            searchPlaceholder="Procurar Fonte..."
-            emptyPlaceholder="Nenhuma Fonte encontrada."
-          />
-        </div>
-        <div className="grid w-full items-center gap-2">
-          <Label htmlFor="case" className="flex items-center gap-2">
-            <PcCase className="h-5 w-5 text-muted-foreground" />
-            Gabinete
-          </Label>
-           <Combobox
-            name="case"
-            items={componentsData.case}
-            value={caseComponent}
-            onChange={setCaseComponent}
-            placeholder="Selecione um Gabinete"
-            searchPlaceholder="Procurar Gabinete..."
-            emptyPlaceholder="Nenhum Gabinete encontrado."
-          />
-        </div>
+        {renderComboboxWithDetails('cpu', Cpu, 'Processador (CPU)', cpu, setCpu)}
+        {renderComboboxWithDetails('cooler', Fan, 'Cooler do Processador', cooler, setCooler)}
+        {renderComboboxWithDetails('gpu', Puzzle, 'Placa de Vídeo (GPU)', gpu, setGpu)}
+        {renderComboboxWithDetails('motherboard', CircuitBoard, 'Placa-mãe', motherboard, setMotherboard)}
+        {renderComboboxWithDetails('ram', MemoryStick, 'Memória RAM', ram, setRam)}
+        {renderComboboxWithDetails('storage', HardDrive, 'Armazenamento (SSD/HD)', storage, setStorage)}
+        {renderComboboxWithDetails('psu', Power, 'Fonte (PSU)', psu, setPsu)}
+        {renderComboboxWithDetails('case', PcCase, 'Gabinete', caseComponent, setCaseComponent)}
       </div>
       <SubmitButton className="w-full sm:w-auto bg-accent hover:bg-accent/90">
         Obter Sugestões de Upgrade
