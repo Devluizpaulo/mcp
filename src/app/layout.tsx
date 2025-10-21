@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'TechUpgrade Pro',
+  title: 'MCP - Master Component Planner',
   description: 'Seu assistente de IA para montar e atualizar seu PC.',
 };
 
