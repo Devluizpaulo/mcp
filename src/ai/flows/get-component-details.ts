@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Fetches detailed information about a specific computer component.

@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Generates an optimized PC build configuration based on a given budget.
@@ -61,19 +62,18 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateOptimizedBuildOutputSchema},
   prompt: `You are an expert PC builder, adept at creating optimized build configurations based on user requirements and budget.
 
-  Given the following budget: ${'{{budget}}'} USD
-  Intended use: ${'{{intendedUse}}'}
-  Existing components: ${'{{existingComponents}}'}
+  Given the following budget: {{{budget}}} USD
+  Intended use: {{{intendedUse}}}
+  Existing components: {{{existingComponents}}}
 
-  Generate a PC build configuration that balances performance and cost, offering alternative options within that budget.
+  Generate a primary PC build configuration that balances performance and cost. Then, always suggest 1 or 2 cheaper alternatives, clearly labeling them as 'Alternative Option'.
 
-  The output should include:
+  The output for all configurations should include:
   - Detailed component list with specifications and estimated costs.
   - Total estimated cost of the build configuration.
   - An estimated performance score of the build configuration, from 1 to 10.
-  - Always suggest 1 or 2 cheaper alternatives, with their score, and total cost.
 
-  Format the build configuration to be readable and well-organized.
+  Format the entire response with Markdown to be readable and well-organized.
   `,
 });
 

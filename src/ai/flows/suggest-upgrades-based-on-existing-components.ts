@@ -46,10 +46,10 @@ const prompt = ai.definePrompt({
   name: 'suggestUpgradesBasedOnExistingComponentsPrompt',
   input: {schema: SuggestUpgradesBasedOnExistingComponentsInputSchema},
   output: {schema: SuggestUpgradesBasedOnExistingComponentsOutputSchema},
-  prompt: `Given the user's existing computer components: {{{existingComponents}}}, suggest specific hardware upgrades that will improve overall system performance, taking into account component compatibility and price.
+  prompt: `You are an expert PC hardware analyst. Given the user's existing computer components: {{{existingComponents}}}, suggest specific hardware upgrades that will improve overall system performance.
 
   Your response must include three fields:
-  1. 'suggestedUpgrades': A detailed explanation of why each upgrade is recommended. Be as detailed as possible.
+  1. 'suggestedUpgrades': A detailed explanation of why each upgrade is recommended, identifying performance bottlenecks, and considering component compatibility (e.g., CPU socket and motherboard chipset, RAM type, PSU wattage). Use Markdown for formatting.
   2. 'upgradeCost': The total estimated cost in USD for purchasing all the suggested upgrade components.
   3. 'currentValue': The estimated current market value in USD of the user's existing PC build (before the upgrade).
   `,
