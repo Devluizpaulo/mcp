@@ -9,8 +9,10 @@ import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
 import { chat as chatFlow } from '@/ai/flows/chat';
 import type { ChatInput } from '@/ai/flows/chat';
-import { addDoc, collection, serverTimestamp, getDocs, query, where } from 'firebase/firestore';
+import { serverTimestamp } from 'firebase/firestore';
 import { initializeServerFirebase } from '@/firebase/server-init';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+
 
 export interface UpgradeState {
   form: {
@@ -187,9 +189,11 @@ export async function getNewBuild(
 
 async function saveConfiguration(userId: string, data: any) {
   const { firestore } = await initializeServerFirebase();
-  const collectionRef = collection(firestore, `users/${userId}/configurations`);
+  const collectionRef = firestore.collection(`users/${userId}/configurations`);
   
-  await addDoc(collectionRef, {
+  // addDocumentNonBlocking is a client-side function, we are on the server here.
+  // We should call the admin SDK directly.
+  await collectionRef.add({
     ...data,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -294,9 +298,8 @@ export async function getComponentsByType(type: string): Promise<{ data?: Compon
 
   try {
     const { firestore } = await initializeServerFirebase();
-    const componentsCollection = collection(firestore, 'components');
-    const q = query(componentsCollection, where('type', '==', type));
-    const querySnapshot = await getDocs(q);
+    const componentsCollection = firestore.collection('components');
+    const querySnapshot = await componentsCollection.where('type', '==', type).get();
     
     if (querySnapshot.empty) {
       return { data: [] };
@@ -304,12 +307,11 @@ export async function getComponentsByType(type: string): Promise<{ data?: Compon
 
     const components = querySnapshot.docs.map(doc => ({
       id: doc.id,
-      name: doc.data().name,
-      type: doc.data().type,
+      ...doc.data()
     })) as Component[];
 
     return { data: components };
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Falha ao buscar componentes do tipo ${type}:`, error);
     return { error: `Falha ao buscar componentes do tipo ${type}.` };
   }
