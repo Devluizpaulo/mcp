@@ -10,6 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { initializeServerFirebase } from '@/firebase/server-init';
 import { z } from 'genkit';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase-admin/firestore';
 
 const ComponentSchema = z.object({
     id: z.string(),
@@ -47,7 +48,7 @@ export const listComponentsByType = ai.defineTool(
         if (snapshot.empty) {
             return [];
         }
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Component));
+        return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({ id: doc.id, ...doc.data() } as Component));
     }
 );
 
@@ -62,7 +63,6 @@ export const getComponentDetailsTool = ai.defineTool(
     console.log(`Searching for component: ${componentName}`);
     const componentsCollection = await getComponentsCollection();
     
-    // Sanitize and create keywords from the input name
     const keywords = componentName.toLowerCase().split(/[\s-]+/).filter(k => k);
     if(keywords.length === 0) {
         console.warn('Empty keywords for component search.');
@@ -71,7 +71,6 @@ export const getComponentDetailsTool = ai.defineTool(
     
     console.log(`Using keywords for search: ${keywords.join(', ')}`);
 
-    // Firestore 'array-contains-any' can check for up to 30 values.
     const q = componentsCollection.where('keywords', 'array-contains-any', keywords.slice(0, 30));
     
     const snapshot = await q.get();
@@ -79,10 +78,9 @@ export const getComponentDetailsTool = ai.defineTool(
     if (snapshot.empty) {
       console.warn(`No component found matching keywords: ${keywords.join(', ')}`);
       
-      // Fallback to a broader, less efficient search if the first one fails
       const allDocsSnapshot = await componentsCollection.get();
       const lowerCaseName = componentName.toLowerCase();
-      const foundDoc = allDocsSnapshot.docs.find(doc => (doc.data().name as string).toLowerCase().includes(lowerCaseName));
+      const foundDoc = allDocsSnapshot.docs.find((doc: QueryDocumentSnapshot<DocumentData>) => (doc.data().name as string).toLowerCase().includes(lowerCaseName));
 
       if (foundDoc) {
         console.log(`Fallback search found a match: ${foundDoc.data().name}`);
@@ -93,12 +91,10 @@ export const getComponentDetailsTool = ai.defineTool(
       return undefined;
     }
 
-    // With 'array-contains-any', multiple documents could match. We need to find the best one.
-    // A simple scoring mechanism: the one with more keyword matches is better.
     let bestMatch: Component | null = null;
     let maxScore = 0;
 
-    snapshot.docs.forEach(doc => {
+    snapshot.docs.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
         const data = doc.data();
         const docKeywords = data.keywords || [];
         const score = keywords.reduce((acc, keyword) => docKeywords.includes(keyword) ? acc + 1 : acc, 0);
