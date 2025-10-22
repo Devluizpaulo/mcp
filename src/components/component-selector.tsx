@@ -38,7 +38,7 @@ export function ComponentSelector({ category, label, value, onChange }: Componen
     const fetchComponents = async () => {
       setIsLoading(true);
       setError(null);
-      const result = await getComponentsByType(category);
+      const result = await getComponentsByType(String(category));
       if(result.data) {
         setItems(result.data);
       } else {
@@ -53,7 +53,7 @@ export function ComponentSelector({ category, label, value, onChange }: Componen
 
   return (
     <div className="grid w-full items-center gap-2">
-      <Label htmlFor={category} className="flex items-center gap-2">
+      <Label htmlFor={String(category)} className="flex items-center gap-2">
         <Icon className="h-5 w-5 text-muted-foreground" />
         {label}
       </Label>
@@ -69,7 +69,7 @@ export function ComponentSelector({ category, label, value, onChange }: Componen
             </div>
         ) : (
             <Combobox
-              name={category}
+              name={String(category)}
               items={comboboxItems}
               value={value}
               onChange={onChange}
