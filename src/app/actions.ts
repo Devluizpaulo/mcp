@@ -8,7 +8,6 @@ import { generateOptimizedBuildFromBudget } from '@/ai/flows/generate-optimized-
 import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized-build-from-budget';
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
 import { chat as chatFlow } from '@/ai/flows/chat';
-import type { ChatInput } from '@/ai/flows/chat';
 import { initializeServerFirebase } from '@/firebase/server-init';
 
 export interface UpgradeState {
@@ -289,15 +288,14 @@ export async function getComponentsByType(type: string): Promise<{ data?: Compon
   }
 }
 
-export async function getChatResponse(messages: ChatMessage[]) {
-    if (!messages || messages.length === 0) {
+export async function getChatResponse(message: string) {
+    if (!message) {
         return { error: 'Nenhuma mensagem fornecida.' };
     }
 
     try {
-        const input: ChatInput = { history: messages };
-        const result = await chatFlow(input);
-        return { response: result.response as string };
+        const result = await chatFlow({ message });
+        return { response: result.response };
     } catch (error) {
         console.error(error);
         return { error: 'Falha ao obter resposta do chat.' };

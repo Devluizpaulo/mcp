@@ -13,13 +13,8 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { z } from 'genkit';
 import { getComponentDetailsTool } from '../tools/component-tools';
 
-const MessageSchema = z.object({
-  role: z.enum(['user', 'model']),
-  content: z.string(),
-});
-
 const ChatInputSchema = z.object({
-  history: z.array(MessageSchema),
+  message: z.string(),
 });
 
 export type ChatInput = z.infer<typeof ChatInputSchema>;
@@ -41,7 +36,11 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
     tools: [getComponentDetailsTool, googleAI.googleSearch]
   },
-  async ({ history }) => {
+  async ({ message }) => {
+    
+    const history = await ai.getHistory();
+    history.push({role: 'user', content: message})
+
     const { output } = await ai.generate({
       prompt: history,
       system: `You are MCP, a Master Component Planner AI expert in PC hardware. Your role is to assist users with building, upgrading, and understanding computer components. Be helpful, concise, and technical when needed.

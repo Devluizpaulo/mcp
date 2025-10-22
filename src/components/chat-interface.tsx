@@ -36,8 +36,8 @@ export function ChatInterface() {
     if (!input.trim() || isLoading) return;
 
     const userMessage: ChatMessage = { role: 'user', content: input };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
     
@@ -46,7 +46,7 @@ export function ChatInterface() {
 
 
     try {
-      const result = await getChatResponse(newMessages);
+      const result = await getChatResponse(currentInput);
       
       let aiResponse: ChatMessage;
 
