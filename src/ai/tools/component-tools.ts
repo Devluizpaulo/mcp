@@ -9,9 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { initializeServerFirebase } from '@/firebase/server-init';
-import { collection, getDocs, query, where, Firestore } from 'firebase-admin/firestore';
 import { z } from 'genkit';
-
 
 const ComponentSchema = z.object({
     id: z.string(),
@@ -30,7 +28,7 @@ type Component = z.infer<typeof ComponentSchema>;
 
 async function getComponentsCollection() {
     const { firestore } = await initializeServerFirebase();
-    return collection(firestore as Firestore, 'components');
+    return firestore.collection('components');
 }
 
 export const listComponentsByType = ai.defineTool(
@@ -44,15 +42,14 @@ export const listComponentsByType = ai.defineTool(
     },
     async ({ type }): Promise<Component[]> => {
         const componentsCollection = await getComponentsCollection();
-        const q = query(componentsCollection, where('type', '==', type));
-        const snapshot = await getDocs(q);
+        const q = componentsCollection.where('type', '==', type);
+        const snapshot = await q.get();
         if (snapshot.empty) {
             return [];
         }
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Component[];
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Component));
     }
 );
-
 
 export const getComponentDetailsTool = ai.defineTool(
   {
@@ -75,17 +72,17 @@ export const getComponentDetailsTool = ai.defineTool(
     console.log(`Using keywords for search: ${keywords.join(', ')}`);
 
     // Firestore 'array-contains-any' can check for up to 30 values.
-    const q = query(componentsCollection, where('keywords', 'array-contains-any', keywords.slice(0, 30)));
+    const q = componentsCollection.where('keywords', 'array-contains-any', keywords.slice(0, 30));
     
-    const snapshot = await getDocs(q);
+    const snapshot = await q.get();
     
     if (snapshot.empty) {
       console.warn(`No component found matching keywords: ${keywords.join(', ')}`);
       
       // Fallback to a broader, less efficient search if the first one fails
-      const allDocsSnapshot = await getDocs(componentsCollection);
+      const allDocsSnapshot = await componentsCollection.get();
       const lowerCaseName = componentName.toLowerCase();
-      const foundDoc = allDocsSnapshot.docs.find(doc => doc.data().name.toLowerCase().includes(lowerCaseName));
+      const foundDoc = allDocsSnapshot.docs.find(doc => (doc.data().name as string).toLowerCase().includes(lowerCaseName));
 
       if (foundDoc) {
         console.log(`Fallback search found a match: ${foundDoc.data().name}`);
@@ -113,7 +110,7 @@ export const getComponentDetailsTool = ai.defineTool(
     });
 
     if (bestMatch) {
-         console.log(`Best match found with score ${maxScore}: ${bestMatch.name}`);
+         console.log(`Best match found with score ${maxScore}: ${(bestMatch as Component).name}`);
     } else {
         console.warn(`A match was found with array-contains-any, but scoring logic failed.`);
     }
