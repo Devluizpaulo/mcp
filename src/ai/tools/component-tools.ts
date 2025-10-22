@@ -23,6 +23,7 @@ const ComponentSchema = z.object({
     performanceScore: z.number(),
     estimatedCost: z.number(),
     imageUrl: z.string().optional(),
+    keywords: z.array(z.string()).optional(),
 });
 
 async function getComponentsCollection() {
@@ -54,19 +55,67 @@ export const listComponentsByType = ai.defineTool(
 export const getComponentDetailsTool = ai.defineTool(
   {
     name: 'getComponentDetailsTool',
-    description: 'Retrieves detailed information about a specific computer component from the database by its name.',
-    inputSchema: z.string().describe('The full name of the component to retrieve details for.'),
+    description: 'Retrieves detailed information about a specific computer component from the database by its name. Use keywords from the name for a better match.',
+    inputSchema: z.string().describe('The full or partial name of the component to retrieve details for. E.g., "Intel i5-13600K"'),
     outputSchema: ComponentSchema.optional(),
   },
   async (componentName) => {
+    console.log(`Searching for component: ${componentName}`);
     const componentsCollection = await getComponentsCollection();
-    const q = query(componentsCollection, where('name', '==', componentName));
+    
+    // Sanitize and create keywords from the input name
+    const keywords = componentName.toLowerCase().split(/[\s-]+/).filter(k => k);
+    if(keywords.length === 0) {
+        console.warn('Empty keywords for component search.');
+        return undefined;
+    }
+    
+    console.log(`Using keywords for search: ${keywords.join(', ')}`);
+
+    // Firestore 'array-contains-any' can check for up to 30 values.
+    const q = query(componentsCollection, where('keywords', 'array-contains-any', keywords.slice(0, 30)));
+    
     const snapshot = await getDocs(q);
+    
     if (snapshot.empty) {
-      console.warn(`Component with name "${componentName}" not found in database.`);
+      console.warn(`No component found matching keywords: ${keywords.join(', ')}`);
+      
+      // Fallback to a broader, less efficient search if the first one fails
+      const allDocsSnapshot = await getDocs(componentsCollection);
+      const lowerCaseName = componentName.toLowerCase();
+      const foundDoc = allDocsSnapshot.docs.find(doc => doc.data().name.toLowerCase().includes(lowerCaseName));
+
+      if (foundDoc) {
+        console.log(`Fallback search found a match: ${foundDoc.data().name}`);
+        return { id: foundDoc.id, ...foundDoc.data() } as z.infer<typeof ComponentSchema>;
+      }
+
+      console.warn(`Component with name "${componentName}" not found in database even with fallback.`);
       return undefined;
     }
-    const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() } as z.infer<typeof ComponentSchema>;
+
+    // With 'array-contains-any', multiple documents could match. We need to find the best one.
+    // A simple scoring mechanism: the one with more keyword matches is better.
+    let bestMatch: any = null;
+    let maxScore = 0;
+
+    snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const docKeywords = data.keywords || [];
+        const score = keywords.reduce((acc, keyword) => docKeywords.includes(keyword) ? acc + 1 : acc, 0);
+
+        if(score > maxScore) {
+            maxScore = score;
+            bestMatch = { id: doc.id, ...data };
+        }
+    });
+
+    if (bestMatch) {
+         console.log(`Best match found with score ${maxScore}: ${bestMatch.name}`);
+    } else {
+        console.warn(`A match was found with array-contains-any, but scoring logic failed.`);
+    }
+
+    return bestMatch as z.infer<typeof ComponentSchema> | undefined;
   }
 );

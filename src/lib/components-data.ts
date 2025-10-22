@@ -8,7 +8,8 @@ export const components = [
       model: "i9-13900K",
       specifications: JSON.stringify({ "Cores": 24, "Threads": 32, "Clock": "3.0 GHz", "Boost": "5.8 GHz" }),
       performanceScore: 9.8,
-      estimatedCost: 580
+      estimatedCost: 580,
+      keywords: ["intel", "core", "i9", "13900k", "cpu", "processor"]
     },
     {
       name: "AMD Ryzen 9 7950X",
@@ -17,7 +18,8 @@ export const components = [
       model: "Ryzen 9 7950X",
       specifications: JSON.stringify({ "Cores": 16, "Threads": 32, "Clock": "4.5 GHz", "Boost": "5.7 GHz" }),
       performanceScore: 9.7,
-      estimatedCost: 550
+      estimatedCost: 550,
+      keywords: ["amd", "ryzen", "9", "7950x", "cpu", "processor"]
     },
     {
       name: "Intel Core i5-13600K",
@@ -26,7 +28,8 @@ export const components = [
       model: "i5-13600K",
       specifications: JSON.stringify({ "Cores": 14, "Threads": 20, "Clock": "3.5 GHz", "Boost": "5.1 GHz" }),
       performanceScore: 9.2,
-      estimatedCost: 310
+      estimatedCost: 310,
+      keywords: ["intel", "core", "i5", "13600k", "cpu", "processor"]
     },
     {
       name: "AMD Ryzen 7 7700X",
@@ -35,7 +38,8 @@ export const components = [
       model: "Ryzen 7 7700X",
       specifications: JSON.stringify({ "Cores": 8, "Threads": 16, "Clock": "4.5 GHz", "Boost": "5.4 GHz" }),
       performanceScore: 9.0,
-      estimatedCost: 340
+      estimatedCost: 340,
+      keywords: ["amd", "ryzen", "7", "7700x", "cpu", "processor"]
     },
     // GPUs
     {
@@ -45,7 +49,8 @@ export const components = [
       model: "GeForce RTX 4090",
       specifications: JSON.stringify({ "VRAM": "24GB GDDR6X", "Boost Clock": "2.52 GHz" }),
       performanceScore: 10.0,
-      estimatedCost: 1600
+      estimatedCost: 1600,
+      keywords: ["nvidia", "geforce", "rtx", "4090", "gpu", "video", "card"]
     },
     {
       name: "AMD Radeon RX 7900 XTX",
@@ -54,7 +59,8 @@ export const components = [
       model: "Radeon RX 7900 XTX",
       specifications: JSON.stringify({ "VRAM": "24GB GDDR6", "Boost Clock": "2.5 GHz" }),
       performanceScore: 9.6,
-      estimatedCost: 950
+      estimatedCost: 950,
+      keywords: ["amd", "radeon", "rx", "7900", "xtx", "gpu", "video", "card"]
     },
     {
       name: "NVIDIA GeForce RTX 4070 Ti",
@@ -63,7 +69,8 @@ export const components = [
       model: "GeForce RTX 4070 Ti",
       specifications: JSON.stringify({ "VRAM": "12GB GDDR6X", "Boost Clock": "2.61 GHz" }),
       performanceScore: 9.3,
-      estimatedCost: 800
+      estimatedCost: 800,
+      keywords: ["nvidia", "geforce", "rtx", "4070", "ti", "gpu", "video", "card"]
     },
     // RAM
     {
@@ -73,7 +80,8 @@ export const components = [
         model: "Vengeance DDR5",
         specifications: JSON.stringify({ "Capacity": "32GB (2x16GB)", "Speed": "5600MHz", "Type": "DDR5" }),
         performanceScore: 8.8,
-        estimatedCost: 100
+        estimatedCost: 100,
+        keywords: ["corsair", "vengeance", "32gb", "ddr5", "5600mhz", "ram", "memory"]
     },
     {
         name: "G.Skill Trident Z5 32GB DDR5 6000MHz",
@@ -82,7 +90,8 @@ export const components = [
         model: "Trident Z5",
         specifications: JSON.stringify({ "Capacity": "32GB (2x16GB)", "Speed": "6000MHz", "Type": "DDR5" }),
         performanceScore: 9.1,
-        estimatedCost: 120
+        estimatedCost: 120,
+        keywords: ["g.skill", "trident", "z5", "32gb", "ddr5", "6000mhz", "ram", "memory"]
     },
     // Motherboards
     {
@@ -92,7 +101,8 @@ export const components = [
         model: "ROG Strix Z790-E",
         specifications: JSON.stringify({ "Socket": "LGA 1700", "Chipset": "Z790", "RAM": "DDR5" }),
         performanceScore: 9.5,
-        estimatedCost: 480
+        estimatedCost: 480,
+        keywords: ["asus", "rog", "strix", "z790-e", "z790", "gaming", "motherboard", "mobo"]
     },
     {
         name: "MSI MAG B650 Tomahawk",
@@ -101,7 +111,8 @@ export const components = [
         model: "MAG B650 Tomahawk",
         specifications: JSON.stringify({ "Socket": "AM5", "Chipset": "B650", "RAM": "DDR5" }),
         performanceScore: 8.9,
-        estimatedCost: 220
+        estimatedCost: 220,
+        keywords: ["msi", "mag", "b650", "tomahawk", "motherboard", "mobo"]
     },
     // Storage
     {
@@ -111,7 +122,8 @@ export const components = [
         model: "980 Pro",
         specifications: JSON.stringify({ "Capacity": "1TB", "Type": "NVMe Gen4 SSD", "Read Speed": "7000 MB/s" }),
         performanceScore: 9.7,
-        estimatedCost: 100
+        estimatedCost: 100,
+        keywords: ["samsung", "980", "pro", "1tb", "nvme", "ssd", "storage"]
     },
     {
         name: "Crucial P3 2TB NVMe SSD",
@@ -120,7 +132,8 @@ export const components = [
         model: "P3",
         specifications: JSON.stringify({ "Capacity": "2TB", "Type": "NVMe Gen3 SSD", "Read Speed": "3500 MB/s" }),
         performanceScore: 9.0,
-        estimatedCost: 90
+        estimatedCost: 90,
+        keywords: ["crucial", "p3", "2tb", "nvme", "ssd", "storage"]
     },
     // PSU
     {
@@ -130,7 +143,8 @@ export const components = [
         model: "RM850x",
         specifications: JSON.stringify({ "Wattage": "850W", "Efficiency": "80+ Gold", "Modular": "Fully" }),
         performanceScore: 9.4,
-        estimatedCost: 150
+        estimatedCost: 150,
+        keywords: ["corsair", "rm850x", "850w", "psu", "power", "supply"]
     },
     {
         name: "SeaSonic FOCUS Plus Gold 750W",
@@ -139,7 +153,8 @@ export const components = [
         model: "FOCUS Plus Gold",
         specifications: JSON.stringify({ "Wattage": "750W", "Efficiency": "80+ Gold", "Modular": "Fully" }),
         performanceScore: 9.2,
-        estimatedCost: 120
+        estimatedCost: 120,
+        keywords: ["seasonic", "focus", "plus", "gold", "750w", "psu", "power", "supply"]
     },
     // Case
     {
@@ -149,7 +164,8 @@ export const components = [
         model: "Lancool II Mesh",
         specifications: JSON.stringify({ "Type": "Mid Tower", "Color": "Black", "Fans": "3x Included" }),
         performanceScore: 8.5,
-        estimatedCost: 110
+        estimatedCost: 110,
+        keywords: ["lian", "li", "lancool", "ii", "mesh", "case", "gabinete"]
     },
     {
         name: "Fractal Design Meshify C",
@@ -158,7 +174,8 @@ export const components = [
         model: "Meshify C",
         specifications: JSON.stringify({ "Type": "Mid Tower", "Color": "Black", "Fans": "2x Included" }),
         performanceScore: 8.4,
-        estimatedCost: 95
+        estimatedCost: 95,
+        keywords: ["fractal", "design", "meshify", "c", "case", "gabinete"]
     },
     // Cooler
     {
@@ -168,7 +185,8 @@ export const components = [
         model: "NH-D15",
         specifications: JSON.stringify({ "Type": "Air Cooler", "Fan Size": "140mm" }),
         performanceScore: 9.3,
-        estimatedCost: 100
+        estimatedCost: 100,
+        keywords: ["noctua", "nh-d15", "cooler", "air"]
     },
     {
         name: "Corsair iCUE H150i Elite Capellix",
@@ -177,7 +195,8 @@ export const components = [
         model: "H150i Elite",
         specifications: JSON.stringify({ "Type": "Liquid Cooler (AIO)", "Radiator": "360mm" }),
         performanceScore: 9.6,
-        estimatedCost: 190
+        estimatedCost: 190,
+        keywords: ["corsair", "icue", "h150i", "elite", "capellix", "cooler", "liquid", "aio"]
     }
   ];
   
