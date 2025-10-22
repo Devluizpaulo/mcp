@@ -7,7 +7,7 @@ import type { SuggestUpgradesBasedOnExistingComponentsOutput } from '@/ai/flows/
 import { AiResponseDisplay } from "./ai-response-display";
 import { Button } from "./ui/button";
 import { Bookmark, Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "./ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
