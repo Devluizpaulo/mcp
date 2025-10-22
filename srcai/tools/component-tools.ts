@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { initializeServerFirebase } from '@/firebase/server-init';
-import { collection, getDocs, query, where, type Firestore } from 'firebase/firestore';
+import { collection, getDocs, query, where, type Firestore } from 'firebase-admin/firestore';
 import { z } from 'genkit';
 
 

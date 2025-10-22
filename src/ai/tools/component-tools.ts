@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { initializeServerFirebase } from '@/firebase/server-init';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, Firestore } from 'firebase-admin/firestore';
 import { z } from 'genkit';
 
 
@@ -26,9 +26,11 @@ const ComponentSchema = z.object({
     keywords: z.array(z.string()).optional(),
 });
 
+type Component = z.infer<typeof ComponentSchema>;
+
 async function getComponentsCollection() {
     const { firestore } = await initializeServerFirebase();
-    return collection(firestore, 'components');
+    return collection(firestore as Firestore, 'components');
 }
 
 export const listComponentsByType = ai.defineTool(
@@ -40,14 +42,14 @@ export const listComponentsByType = ai.defineTool(
         }),
         outputSchema: z.array(ComponentSchema),
     },
-    async ({ type }) => {
+    async ({ type }): Promise<Component[]> => {
         const componentsCollection = await getComponentsCollection();
         const q = query(componentsCollection, where('type', '==', type));
         const snapshot = await getDocs(q);
         if (snapshot.empty) {
             return [];
         }
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as z.infer<typeof z.array<typeof ComponentSchema>>;
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Component[];
     }
 );
 
@@ -59,7 +61,7 @@ export const getComponentDetailsTool = ai.defineTool(
     inputSchema: z.string().describe('The full or partial name of the component to retrieve details for. E.g., "Intel i5-13600K"'),
     outputSchema: ComponentSchema.optional(),
   },
-  async (componentName) => {
+  async (componentName): Promise<Component | undefined> => {
     console.log(`Searching for component: ${componentName}`);
     const componentsCollection = await getComponentsCollection();
     
@@ -87,7 +89,7 @@ export const getComponentDetailsTool = ai.defineTool(
 
       if (foundDoc) {
         console.log(`Fallback search found a match: ${foundDoc.data().name}`);
-        return { id: foundDoc.id, ...foundDoc.data() } as z.infer<typeof ComponentSchema>;
+        return { id: foundDoc.id, ...foundDoc.data() } as Component;
       }
 
       console.warn(`Component with name "${componentName}" not found in database even with fallback.`);
@@ -96,11 +98,11 @@ export const getComponentDetailsTool = ai.defineTool(
 
     // With 'array-contains-any', multiple documents could match. We need to find the best one.
     // A simple scoring mechanism: the one with more keyword matches is better.
-    let bestMatch: any = null;
+    let bestMatch: Component | null = null;
     let maxScore = 0;
 
     snapshot.docs.forEach(doc => {
-        const data = doc.data();
+        const data = doc.data() as Component;
         const docKeywords = data.keywords || [];
         const score = keywords.reduce((acc, keyword) => docKeywords.includes(keyword) ? acc + 1 : acc, 0);
 
@@ -116,6 +118,6 @@ export const getComponentDetailsTool = ai.defineTool(
         console.warn(`A match was found with array-contains-any, but scoring logic failed.`);
     }
 
-    return bestMatch as z.infer<typeof ComponentSchema> | undefined;
+    return bestMatch || undefined;
   }
 );
