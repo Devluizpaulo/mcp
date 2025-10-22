@@ -91,7 +91,7 @@ export const getComponentDetailsTool = ai.defineTool(
       return undefined;
     }
 
-    let bestMatch: Component | null = null;
+    let bestMatch: Component | undefined = undefined;
     let maxScore = 0;
 
     snapshot.docs.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
