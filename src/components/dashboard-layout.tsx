@@ -20,11 +20,13 @@ import {
   Wrench,
   Cpu,
   Bookmark,
+  Home,
 } from 'lucide-react';
 import { UserNav } from './user-nav';
 
 const menuItems = [
-  { href: '/', label: 'Upgrade Meu PC', icon: Wrench },
+  { href: '/', label: 'Início', icon: Home },
+  { href: '/upgrade', label: 'Upgrade Meu PC', icon: Wrench },
   { href: '/build', label: 'Montar Novo PC', icon: Cpu },
   { href: '/my-builds', label: 'Minhas Builds', icon: Bookmark },
   { href: '/chat', label: 'Chat com IA', icon: MessageSquare },
@@ -46,7 +48,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} passHref>
+                <Link href={item.href}>
                   <SidebarMenuButton
                     isActive={pathname === item.href}
                     icon={<item.icon />}
