@@ -9,6 +9,7 @@ import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
 import { chat as chatFlow } from '@/ai/flows/chat';
 import { initializeServerFirebase } from '@/firebase/server-init';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export interface UpgradeState {
   form: {
@@ -161,12 +162,10 @@ async function saveConfiguration(userId: string, data: any) {
   const { firestore } = await initializeServerFirebase();
   const collectionRef = firestore.collection(`users/${userId}/configurations`);
   
-  const { serverTimestamp } = await import('firebase-admin/firestore');
-  
   await collectionRef.add({
     ...data,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
   });
 }
 

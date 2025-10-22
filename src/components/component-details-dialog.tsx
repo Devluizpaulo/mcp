@@ -40,7 +40,7 @@ export function ComponentDetailsDialog({
 
     if (result.error) {
       setError(result.error);
-    } else {
+    } else if (result.details) {
       setDetails(result.details);
     }
 

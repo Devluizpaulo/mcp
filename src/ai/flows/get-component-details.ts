@@ -38,7 +38,6 @@ const prompt = ai.definePrompt({
   name: 'getComponentDetailsPrompt',
   input: { schema: z.object({ componentDetails: z.string() }) },
   output: { schema: GetComponentDetailsOutputSchema },
-  tools: [getComponentDetailsTool],
   prompt: `You are a PC hardware expert and a great teacher. Based on the following component data (in JSON format), provide a detailed and educational analysis.
 
   Component Data:
@@ -60,7 +59,6 @@ const getComponentDetailsFlow = ai.defineFlow(
     name: 'getComponentDetailsFlow',
     inputSchema: GetComponentDetailsInputSchema,
     outputSchema: GetComponentDetailsOutputSchema,
-    tools: [getComponentDetailsTool],
   },
   async ({ componentName }) => {
     // First, use the tool to get the structured data from Firestore.

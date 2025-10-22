@@ -19,8 +19,10 @@ const iconMap: { [key: string]: React.ElementType } = {
   case: PcCase,
 };
 
+type Category = keyof typeof iconMap;
+
 interface ComponentSelectorProps {
-  category: keyof typeof iconMap;
+  category: Category;
   label: string;
   value: string;
   onChange: (value: string) => void;

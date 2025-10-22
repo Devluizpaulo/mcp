@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -51,9 +52,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <Link href={item.href}>
                   <SidebarMenuButton
                     isActive={pathname === item.href}
-                    icon={<item.icon />}
                     tooltip={item.label}
                   >
+                    <item.icon />
                     {item.label}
                   </SidebarMenuButton>
                 </Link>

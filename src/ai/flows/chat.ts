@@ -34,15 +34,14 @@ const chatFlow = ai.defineFlow(
     name: 'chatFlow',
     inputSchema: ChatInputSchema,
     outputSchema: ChatOutputSchema,
-    tools: [getComponentDetailsTool, googleAI.googleSearch]
   },
-  async ({ message }) => {
+  async ({ message }, context) => {
     
-    const history = await ai.getHistory();
-    history.push({role: 'user', content: message})
+    const history = await context.history();
 
     const { output } = await ai.generate({
-      prompt: history,
+      prompt: message,
+      history,
       system: `You are MCP, a Master Component Planner AI expert in PC hardware. Your role is to assist users with building, upgrading, and understanding computer components. Be helpful, concise, and technical when needed.
 
       When a user wants to analyze their PC for an upgrade, you must guide them through the process conversationally.
@@ -54,8 +53,9 @@ const chatFlow = ai.defineFlow(
       6. Once you have a few key components (at least CPU, GPU, and RAM), you can provide a preliminary upgrade analysis. Only suggest saving the configuration after you have collected enough data and performed an analysis.
       7. For general chat, just be a helpful AI assistant.`,
       model: 'gemini-1.5-flash',
+      tools: [getComponentDetailsTool, googleAI.googleSearch]
     });
 
-    return { response: output.text ?? 'Sorry, I could not process that.' };
+    return { response: output?.text ?? 'Sorry, I could not process that.' };
   }
 );
