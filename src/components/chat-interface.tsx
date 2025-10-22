@@ -9,11 +9,13 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { SendHorizonal, AlertTriangle, User } from 'lucide-react';
 import { getChatResponse, type ChatMessage } from '@/app/actions';
 import { AiResponseDisplay } from './ai-response-display';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -40,10 +42,10 @@ export function ChatInterface() {
     const currentInput = input;
     setInput('');
     setIsLoading(true);
+    setError(null);
     
     // Add a placeholder for the AI response
     setMessages(prev => [...prev, { role: 'model', content: '...' }]);
-
 
     try {
       const result = await getChatResponse(currentInput);
@@ -51,21 +53,25 @@ export function ChatInterface() {
       let aiResponse: ChatMessage;
 
       if (result.error) {
-        aiResponse = { role: 'model', content: `Error: ${result.error}` };
+        setError(result.error);
+        aiResponse = { role: 'model', content: `Ocorreu um erro. Por favor, tente novamente.` };
       } else {
         aiResponse = { role: 'model', content: result.response as string };
       }
 
       setMessages(prev => {
         const updatedMessages = [...prev];
+        // Replace the placeholder with the actual response
         updatedMessages[updatedMessages.length - 1] = aiResponse;
         return updatedMessages;
       });
 
-    } catch (error) {
+    } catch (e: any) {
+      const errorMessageContent = 'Ocorreu um erro de comunicação. Por favor, recarregue a página e tente novamente.';
+      setError(errorMessageContent);
       const errorMessage = {
         role: 'model' as const,
-        content: 'Ocorreu um erro. Por favor, tente novamente.',
+        content: errorMessageContent,
       };
       setMessages(prev => {
         const updatedMessages = [...prev];
@@ -121,12 +127,19 @@ export function ChatInterface() {
               )}
             </div>
           ))}
-           {messages.length === 0 && (
+           {messages.length === 0 && !error && (
                 <div className="text-center text-muted-foreground pt-10">
                     <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground/50" />
                     <h3 className="mt-4 text-lg font-semibold text-foreground">Converse com o MCP</h3>
                     <p className="mt-2 text-sm">Inicie a conversa para que a IA possa analisar seu PC ou tirar suas dúvidas.</p>
                 </div>
+            )}
+            {error && (
+                 <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Erro na Conversa</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
             )}
         </div>
       </ScrollArea>

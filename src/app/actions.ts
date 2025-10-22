@@ -287,16 +287,20 @@ export async function getComponentsByType(type: string): Promise<{ data?: Compon
   }
 }
 
-export async function getChatResponse(message: string) {
-    if (!message) {
-        return { error: 'Nenhuma mensagem fornecida.' };
-    }
+export async function getChatResponse(message: string): Promise<{ response?: string, error?: string }> {
+  if (!message) {
+    return { error: 'Nenhuma mensagem fornecida.' };
+  }
 
-    try {
-        const result = await chatFlow({ message });
-        return { response: result.response };
-    } catch (error) {
-        console.error(error);
-        return { error: 'Falha ao obter resposta do chat.' };
+  try {
+    const result = await chatFlow({ message });
+    return { response: result.response };
+  } catch (error) {
+    console.error('Error in getChatResponse:', error);
+    // This is a workaround to surface the error to the client.
+    if (error instanceof Error) {
+        return { error: `Falha ao obter resposta do chat: ${error.message}` };
     }
+    return { error: 'Falha ao obter resposta do chat.' };
+  }
 }
