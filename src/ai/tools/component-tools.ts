@@ -99,18 +99,18 @@ export const getComponentDetailsTool = ai.defineTool(
     let maxScore = 0;
 
     snapshot.docs.forEach(doc => {
-        const data = doc.data() as Component;
+        const data = doc.data();
         const docKeywords = data.keywords || [];
         const score = keywords.reduce((acc, keyword) => docKeywords.includes(keyword) ? acc + 1 : acc, 0);
 
         if(score > maxScore) {
             maxScore = score;
-            bestMatch = { id: doc.id, ...data };
+            bestMatch = { ...data, id: doc.id } as Component;
         }
     });
 
     if (bestMatch) {
-         console.log(`Best match found with score ${maxScore}: ${(bestMatch as Component).name}`);
+         console.log(`Best match found with score ${maxScore}: ${bestMatch.name}`);
     } else {
         console.warn(`A match was found with array-contains-any, but scoring logic failed.`);
     }
