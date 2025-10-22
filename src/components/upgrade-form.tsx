@@ -1,12 +1,13 @@
 
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { getUpgradeSuggestions, type UpgradeState } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { SubmitButton } from '@/components/submit-button';
-import { ComponentSelector } from './component-selector';
 import { UpgradeResultDisplay } from './upgrade-result-display';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 const initialState: UpgradeState = {
   form: {
@@ -20,15 +21,6 @@ export function UpgradeForm() {
   const [state, formAction] = useActionState(getUpgradeSuggestions, initialState);
   const { toast } = useToast();
 
-  const [cpu, setCpu] = useState('');
-  const [gpu, setGpu] = useState('');
-  const [motherboard, setMotherboard] = useState('');
-  const [ram, setRam] = useState('');
-  const [storage, setStorage] = useState('');
-  const [psu, setPsu] = useState('');
-  const [caseComponent, setCaseComponent] = useState('');
-  const [cooler, setCooler] = useState('');
-
   useEffect(() => {
     if (state.status === 'error' && state.message) {
       toast({
@@ -37,42 +29,23 @@ export function UpgradeForm() {
         variant: 'destructive',
       });
     }
-    if (state.status === 'idle' || state.status === 'success') {
-       try {
-        const initial = JSON.parse(state.form.existingComponents || '{}');
-        setCpu(initial.cpu || '');
-        setGpu(initial.gpu || '');
-        setMotherboard(initial.motherboard || '');
-        setRam(initial.ram || '');
-        setStorage(initial.storage || '');
-        setPsu(initial.psu || '');
-        setCaseComponent(initial.case || '');
-        setCooler(initial.cooler || '');
-      } catch (e) {
-        setCpu('');
-        setGpu('');
-        setMotherboard('');
-        setRam('');
-        setStorage('');
-        setPsu('');
-        setCaseComponent('');
-        setCooler('');
-      }
-    }
   }, [state, toast]);
 
   return (
     <form action={formAction} className="space-y-8">
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-          <ComponentSelector category="cpu" label="Processador (CPU)" value={cpu} onChange={setCpu} />
-          <ComponentSelector category="cooler" label="Cooler do Processador" value={cooler} onChange={setCooler} />
-          <ComponentSelector category="gpu" label="Placa de Vídeo (GPU)" value={gpu} onChange={setGpu} />
-          <ComponentSelector category="motherboard" label="Placa-mãe" value={motherboard} onChange={setMotherboard} />
-          <ComponentSelector category="ram" label="Memória RAM" value={ram} onChange={setRam} />
-          <ComponentSelector category="storage" label="Armazenamento (SSD/HD)" value={storage} onChange={setStorage} />
-          <ComponentSelector category="psu" label="Fonte (PSU)" value={psu} onChange={setPsu} />
-          <ComponentSelector category="case" label="Gabinete" value={caseComponent} onChange={setCaseComponent} />
+      <div className="space-y-4">
+        <div className="grid w-full gap-2">
+            <Label htmlFor="existingComponents">Seus Componentes Atuais</Label>
+            <Textarea
+                id="existingComponents"
+                name="existingComponents"
+                placeholder="Ex: CPU: Intel i5-9400F, Placa de Vídeo: NVIDIA GTX 1660, RAM: 16GB DDR4 2666MHz..."
+                rows={5}
+                defaultValue={state.form.existingComponents}
+            />
+            <p className="text-sm text-muted-foreground">
+                Liste os componentes que você conhece. Não precisa ser todos.
+            </p>
         </div>
       </div>
       

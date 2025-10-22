@@ -7,9 +7,9 @@ export default function UpgradePage() {
         <div className="max-w-4xl mx-auto w-full">
              <Card className="border-primary/20">
               <CardHeader>
-                <CardTitle>Sugestões de Upgrade</CardTitle>
+                <CardTitle>Análise de Upgrade com IA</CardTitle>
                 <CardDescription>
-                  Liste seus componentes atuais e nossa IA irá sugerir os melhores upgrades para sua máquina.
+                  Liste os componentes do seu PC atual em linguagem natural. Quanto mais detalhes, melhor a análise.
                 </CardDescription>
               </CardHeader>
               <CardContent>

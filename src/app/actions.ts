@@ -9,10 +9,7 @@ import type { GenerateOptimizedBuildOutput } from '@/ai/flows/generate-optimized
 import { getComponentDetails as getComponentDetailsFlow } from '@/ai/flows/get-component-details';
 import { chat as chatFlow } from '@/ai/flows/chat';
 import type { ChatInput } from '@/ai/flows/chat';
-import { serverTimestamp } from 'firebase/firestore';
 import { initializeServerFirebase } from '@/firebase/server-init';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-
 
 export interface UpgradeState {
   form: {
@@ -46,14 +43,7 @@ export interface Component {
 }
 
 const upgradeSchema = z.object({
-  cpu: z.string().min(1, 'Por favor, selecione seu processador (CPU).'),
-  cooler: z.string().min(1, 'Por favor, selecione seu cooler.'),
-  gpu: z.string().min(1, 'Por favor, selecione sua placa de vídeo (GPU).'),
-  motherboard: z.string().min(1, 'Por favor, selecione sua placa-mãe.'),
-  ram: z.string().min(1, 'Por favor, selecione sua memória RAM.'),
-  storage: z.string().min(1, 'Por favor, selecione seu armazenamento.'),
-  psu: z.string().min(1, 'Por favor, selecione sua fonte de alimentação (PSU).'),
-  case: z.string().min(1, 'Por favor, selecione seu gabinete.'),
+  existingComponents: z.string().min(10, 'Por favor, liste pelo menos um componente para análise.'),
 });
 
 const buildSchema = z.object({
@@ -85,20 +75,9 @@ export async function getUpgradeSuggestions(
   formData: FormData
 ): Promise<UpgradeState> {
   
-  const components = {
-    cpu: formData.get('cpu') as string,
-    cooler: formData.get('cooler') as string,
-    gpu: formData.get('gpu') as string,
-    motherboard: formData.get('motherboard') as string,
-    ram: formData.get('ram') as string,
-    storage: formData.get('storage') as string,
-    psu: formData.get('psu') as string,
-    case: formData.get('case') as string,
-  };
-  
-  const jsonComponents = JSON.stringify(components);
+  const existingComponents = formData.get('existingComponents') as string;
 
-  const validatedFields = upgradeSchema.safeParse(components);
+  const validatedFields = upgradeSchema.safeParse({ existingComponents });
 
   if (!validatedFields.success) {
     const firstError = Object.values(validatedFields.error.flatten().fieldErrors)[0]?.[0];
@@ -106,35 +85,27 @@ export async function getUpgradeSuggestions(
       ...prevState,
       status: 'error',
       message: firstError || "Erro de validação",
-      form: { existingComponents: jsonComponents },
+      form: { existingComponents },
     };
   }
-  
-  const existingComponentsString = Object.entries(validatedFields.data)
-      .map(([key, value]) => {
-          if (!value) return null;
-          return `${key.toUpperCase()}: ${value}`;
-      })
-      .filter(Boolean)
-      .join(', ');
 
   try {
     const result = await suggestUpgradesBasedOnExistingComponents({
-      existingComponents: existingComponentsString,
+      existingComponents: validatedFields.data.existingComponents,
     });
     return {
       ...prevState,
       status: 'success',
       message: 'Sugestões geradas com sucesso!',
       result: result,
-      form: { existingComponents: jsonComponents },
+      form: { existingComponents },
     };
   } catch (error) {
     return {
       ...prevState,
       status: 'error',
       message: 'Ocorreu um erro ao gerar sugestões. Por favor, tente novamente.',
-      form: { existingComponents: jsonComponents },
+      form: { existingComponents },
     };
   }
 }
@@ -191,8 +162,8 @@ async function saveConfiguration(userId: string, data: any) {
   const { firestore } = await initializeServerFirebase();
   const collectionRef = firestore.collection(`users/${userId}/configurations`);
   
-  // addDocumentNonBlocking is a client-side function, we are on the server here.
-  // We should call the admin SDK directly.
+  const { serverTimestamp } = await import('firebase-admin/firestore');
+  
   await collectionRef.add({
     ...data,
     createdAt: serverTimestamp(),
