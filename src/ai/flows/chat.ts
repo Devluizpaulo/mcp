@@ -29,11 +29,16 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
   return chatFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'chatPrompt',
-  input: { schema: ChatInputSchema },
-  output: { schema: ChatOutputSchema },
-  prompt: `Você é MCP, a Master Component Planner AI expert in PC hardware. Your role is to assist users with building, upgrading, and understanding computer components. Be helpful, concise, and technical when needed.
+const chatFlow = ai.defineFlow(
+  {
+    name: 'chatFlow',
+    inputSchema: ChatInputSchema,
+    outputSchema: ChatOutputSchema,
+  },
+  async ({ message }) => {
+    const { output } = await ai.generate({
+      model: 'gemini-1.5-pro',
+      prompt: `Você é MCP, a Master Component Planner AI expert in PC hardware. Your role is to assist users with building, upgrading, and understanding computer components. Be helpful, concise, and technical when needed.
 
   When a user wants to analyze their PC for an upgrade, you must guide them through the process conversationally.
   1. Ask for one component at a time (e.g., "Let's start with your processor (CPU). What model is it?").
@@ -44,20 +49,10 @@ const prompt = ai.definePrompt({
   6. Once you have a few key components (at least CPU, GPU, and RAM), you can provide a preliminary upgrade analysis. Only suggest saving the configuration after you have collected enough data and performed an analysis.
   7. For general chat, just be a helpful AI assistant.
 
-  User message: {{{message}}}`
-});
-
-const chatFlow = ai.defineFlow(
-  {
-    name: 'chatFlow',
-    inputSchema: ChatInputSchema,
-    outputSchema: ChatOutputSchema,
-  },
-  async ({ message }) => {
-    const { output } = await prompt({
-      message,
+  User message: ${message}`,
+      tools: [getComponentDetailsTool],
     });
 
-    return { response: output?.response ?? 'Sorry, I could not process that.' };
+    return { response: output?.text ?? 'Sorry, I could not process that.' };
   }
 );
