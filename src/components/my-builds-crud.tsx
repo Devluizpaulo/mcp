@@ -140,6 +140,7 @@ function BuildForm({
         aiResponse: "Criado manualmente.",
         details: { type: 'build' },
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
       toast({ title: 'Sucesso!', description: 'Nova build salva.' });
     }
@@ -356,7 +357,7 @@ export function MyBuildsCrud() {
                       {config.description}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      {new Date(
+                      {config.updatedAt && new Date(
                         config.updatedAt.seconds * 1000
                       ).toLocaleDateString()}
                     </TableCell>
@@ -415,3 +416,5 @@ export function MyBuildsCrud() {
     </Dialog>
   );
 }
+
+    
