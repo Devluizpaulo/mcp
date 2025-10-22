@@ -9,7 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/google-genai';
+import { googleAI, googleSearch } from '@genkit-ai/google-genai';
 import { z } from 'genkit';
 import { getComponentDetailsTool } from '../tools/component-tools';
 
@@ -43,8 +43,8 @@ const chatFlow = ai.defineFlow(
       prompt: message,
       history,
       model: 'gemini-1.5-flash',
-      tools: [getComponentDetailsTool, googleAI.googleSearch],
-      system: `You are MCP, a Master Component Planner AI expert in PC hardware. Your role is to assist users with building, upgrading, and understanding computer components. Be helpful, concise, and technical when needed.
+      tools: [getComponentDetailsTool, googleSearch],
+      system: `Você é MCP, a Master Component Planner AI expert in PC hardware. Your role is to assist users with building, upgrading, and understanding computer components. Be helpful, concise, and technical when needed.
 
       When a user wants to analyze their PC for an upgrade, you must guide them through the process conversationally.
       1. Ask for one component at a time (e.g., "Let's start with your processor (CPU). What model is it?").
