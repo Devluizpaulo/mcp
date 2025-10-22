@@ -1,5 +1,5 @@
 
-import { UpgradeForm } from '@/components/upgrade-form';
+import { ChatInterface } from '@/components/chat-interface';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function UpgradePage() {
@@ -10,11 +10,11 @@ export default function UpgradePage() {
               <CardHeader>
                 <CardTitle>Análise de Upgrade com IA</CardTitle>
                 <CardDescription>
-                  Liste os componentes do seu PC atual em linguagem natural. Quanto mais detalhes, melhor a análise.
+                  Converse com o MCP. Ele vai te guiar para descobrir os componentes do seu PC e sugerir os melhores upgrades.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <UpgradeForm />
+                <ChatInterface />
               </CardContent>
             </Card>
         </div>

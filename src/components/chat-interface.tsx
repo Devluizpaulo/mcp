@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useRef, useEffect, FormEvent } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { SendHorizonal, AlertTriangle, User } from 'lucide-react';
 import { getChatResponse, type ChatMessage } from '@/app/actions';
 import { AiResponseDisplay } from './ai-response-display';
@@ -16,12 +17,14 @@ export function ChatInterface() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
-        if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
+    setTimeout(() => {
+        if (scrollAreaRef.current) {
+            const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
+            if (viewport) {
+                viewport.scrollTop = viewport.scrollHeight;
+            }
         }
-    }
+    }, 100);
   };
 
   useEffect(() => {
@@ -75,8 +78,8 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-[70vh]">
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+    <div className="flex flex-col h-full min-h-[60vh]">
+      <ScrollArea className="flex-1 p-4 -mx-4" ref={scrollAreaRef}>
         <div className="space-y-6">
           {messages.map((message, index) => (
             <div
@@ -122,14 +125,14 @@ export function ChatInterface() {
                 <div className="text-center text-muted-foreground pt-10">
                     <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground/50" />
                     <h3 className="mt-4 text-lg font-semibold text-foreground">Converse com o MCP</h3>
-                    <p className="mt-2 text-sm">Tire suas dúvidas sobre hardware, peça sugestões ou qualquer outra coisa relacionada a PCs.</p>
+                    <p className="mt-2 text-sm">Inicie a conversa para que a IA possa analisar seu PC ou tirar suas dúvidas.</p>
                 </div>
             )}
         </div>
       </ScrollArea>
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 border-t p-4"
+        className="flex items-center gap-2 border-t -mx-6 px-4 pt-4"
       >
         <Input
           value={input}

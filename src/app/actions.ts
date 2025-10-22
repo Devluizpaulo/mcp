@@ -278,7 +278,8 @@ export async function getComponentsByType(type: string): Promise<{ data?: Compon
 
     const components = querySnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      name: doc.data().name,
+      type: doc.data().type,
     })) as Component[];
 
     return { data: components };
