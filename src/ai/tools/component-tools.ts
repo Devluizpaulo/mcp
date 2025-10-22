@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Genkit tools for interacting with the components collection in Firestore.
