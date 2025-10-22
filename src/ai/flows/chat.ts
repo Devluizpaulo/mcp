@@ -54,7 +54,7 @@ const chatFlow = ai.defineFlow(
       5. Proceed to the next component (GPU, RAM, Motherboard, etc.).
       6. Once you have a few key components (at least CPU, GPU, and RAM), you can provide a preliminary upgrade analysis. Only suggest saving the configuration after you have collected enough data and performed an analysis.
       7. For general chat, just be a helpful AI assistant.`,
-      model: 'googleai/gemini-2.5-flash',
+      model: 'googleai/gemini-1.5-flash',
     });
 
     return { response: output.text ?? 'Sorry, I could not process that.' };
