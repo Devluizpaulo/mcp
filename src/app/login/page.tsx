@@ -2,11 +2,8 @@ import { AuthForm } from '@/components/auth-form';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
-import { AlertTriangle, UserCircle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export default function LoginPage() {
   return (
